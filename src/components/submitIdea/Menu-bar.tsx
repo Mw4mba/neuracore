@@ -1,112 +1,275 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   AlignCenter,
   AlignLeft,
   AlignRight,
+  AlignJustify,
   Bold,
+  Italic,
+  Strikethrough,
+  Type,
+  Terminal,
+  Palette,
+  Undo,
+  Redo,
+  Link as LinkIcon,
   Heading1,
   Heading2,
   Heading3,
-  Highlighter,
-  Italic,
+  ChevronDown,
   List,
   ListOrdered,
-  Strikethrough,
+  Highlighter,
+  TextQuote,
+  PaletteIcon,
 } from "lucide-react";
-
 import { Editor } from "@tiptap/react";
 import Toggle from "./Toggle";
+import type { Level } from "@tiptap/extension-heading";
 
 interface MenuBarProps {
   editor: Editor | null;
 }
 
-interface Option {
-  icon: React.ReactNode;
-  onClick: () => void;
-  pressed: boolean;
-}
-
 const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
-  if (!editor) {
-    return null;
-  }
+  const [showColors, setShowColors] = useState(false);
+  const [showHeadings, setShowHeadings] = useState(false);
+  const [showLists, setShowLists] = useState(false);
+  const [selectionToolbarVisible, setSelectionToolbarVisible] = useState(false);
+  const [selectionPosition, setSelectionPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
 
-  const options: Option[] = [
+  if (!editor) return null;
+
+  // ===== Heading options =====
+  const headingOptions: { level: Level; label: string; icon: React.ReactNode }[] = [
+    { level: 1, label: "Heading 1", icon: <Heading1 className="size-4" /> },
+    { level: 2, label: "Heading 2", icon: <Heading2 className="size-4" /> },
+    { level: 3, label: "Heading 3", icon: <Heading3 className="size-4" /> },
+  ];
+
+  const colors = [
+  "#000000", // Black
+  "#E57373", // Red
+  "#F06292", // Pink
+  "#BA68C8", // Purple
+  "#9575CD", // Deep Purple
+  "#7986CB", // Indigo
+  "#64B5F6", // Blue
+  "#4DD0E1", // Cyan
+  "#4DB6AC", // Teal
+  "#81C784", // Green
+  "#AED581", // Light Green
+  "#DCE775", // Lime
+  "#FFF176", // Yellow
+  "#FFD54F", // Amber
+  "#FFB74D", // Orange
+  "#FF8A65", // Deep Orange
+  "#A1887F", // Brown
+  "#E0E0E0", // Grey
+  "#FFFFFF", // White
+];
+  // ===== Toolbar groups =====
+  const undoRedo = [
+    { icon: <Undo className="size-4" />, onClick: () => { editor.chain().focus().undo().run(); return true; }, tooltip: "Undo" },
+    { icon: <Redo className="size-4" />, onClick: () => { editor.chain().focus().redo().run(); return true; }, tooltip: "Redo" },
+  ];
+
+  const headerListQuoteCode = [
     {
       icon: <Heading1 className="size-4" />,
-      onClick: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      pressed: editor.isActive("heading", { level: 1 }),
-    },
-    {
-      icon: <Heading2 className="size-4" />,
-      onClick: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      pressed: editor.isActive("heading", { level: 2 }),
-    },
-    {
-      icon: <Heading3 className="size-4" />,
-      onClick: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      pressed: editor.isActive("heading", { level: 3 }),
-    },
-    {
-      icon: <Bold className="size-4" />,
-      onClick: () => editor.chain().focus().toggleBold().run(),
-      pressed: editor.isActive("bold"),
-    },
-    {
-      icon: <Italic className="size-4" />,
-      onClick: () => editor.chain().focus().toggleItalic().run(),
-      pressed: editor.isActive("italic"),
-    },
-    {
-      icon: <Strikethrough className="size-4" />,
-      onClick: () => editor.chain().focus().toggleStrike().run(),
-      pressed: editor.isActive("strike"),
-    },
-    {
-      icon: <AlignLeft className="size-4" />,
-      onClick: () => editor.chain().focus().setTextAlign("left").run(),
-      pressed: editor.isActive({ textAlign: "left" }),
-    },
-    {
-      icon: <AlignCenter className="size-4" />,
-      onClick: () => editor.chain().focus().setTextAlign("center").run(),
-      pressed: editor.isActive({ textAlign: "center" }),
-    },
-    {
-      icon: <AlignRight className="size-4" />,
-      onClick: () => editor.chain().focus().setTextAlign("right").run(),
-      pressed: editor.isActive({ textAlign: "right" }),
+      onClick: () => { setShowHeadings(!showHeadings); return true; },
+      tooltip: "Headers",
+      dropdown: (
+        <div className="absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-32 shadow-md z-50">
+          {headingOptions.map((h) => (
+            <button
+              key={h.level}
+              type="button"
+              onClick={() => { editor.chain().focus().toggleHeading({ level: h.level }).run(); setShowHeadings(false); return true; }}
+              className={`flex items-center gap-2 px-2 py-1 rounded text-sm hover:bg-bg ${
+                editor.isActive("heading", { level: h.level }) ? "bg-bg" : ""
+              }`}
+              title={h.label}
+            >
+              {h.icon} {h.label}
+            </button>
+          ))}
+        </div>
+      ),
     },
     {
       icon: <List className="size-4" />,
-      onClick: () => editor.chain().focus().toggleBulletList().run(),
-      pressed: editor.isActive("bulletList"),
+      onClick: () => { setShowLists(!showLists); return true; },
+      tooltip: "Lists",
+      dropdown: (
+        <div className="absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-32 shadow-md z-50">
+          <button
+            type="button"
+            onClick={() => { editor.chain().focus().toggleBulletList().run(); return true; }}
+            className="px-2 py-1 rounded hover:bg-bg"
+          >
+            Bullet List
+          </button>
+          <button
+            type="button"
+            onClick={() => { editor.chain().focus().toggleOrderedList().run(); return true; }}
+            className="px-2 py-1 rounded hover:bg-bg"
+          >
+            Numbered List
+          </button>
+        </div>
+      ),
     },
     {
-      icon: <ListOrdered className="size-4" />,
-      onClick: () => editor.chain().focus().toggleOrderedList().run(),
-      pressed: editor.isActive("orderedList"),
+      icon: <TextQuote className="size-4" />,
+      onClick: () => { editor.chain().focus().toggleBlockquote().run(); return true; },
+      tooltip: "Blockquote",
     },
     {
-      icon: <Highlighter className="size-4" />,
-      onClick: () => editor.chain().focus().toggleHighlight().run(),
-      pressed: editor.isActive("highlight"),
+      icon: <Terminal className="size-4" />,
+      onClick: () => { editor.chain().focus().toggleCodeBlock().run(); return true; },
+      tooltip: "Code Block",
     },
   ];
 
-  return (
-    <div className="border rounded-md p-1 mb-1 bg-bg-dark border-border-secondary space-x-2 z-50">
-      {options.map((option, index) => (
-        <Toggle
-          key={index}
-          pressed={option.pressed}
-          onPressedChange={option.onClick}
-        >
-          {option.icon}
+  const formatting = [
+    { icon: <Bold className="size-4" />, onClick: () => { editor.chain().focus().toggleBold().run(); return true; }, tooltip: "Bold" },
+    { icon: <Italic className="size-4" />, onClick: () => { editor.chain().focus().toggleItalic().run(); return true; }, tooltip: "Italic" },
+    { icon: <Strikethrough className="size-4" />, onClick: () => { editor.chain().focus().toggleStrike().run(); return true; }, tooltip: "Strikethrough" },
+    { icon: <Type className="size-4" />, onClick: () => { editor.chain().focus().toggleUnderline().run(); return true; }, tooltip: "Underline" },
+    { icon: <Highlighter className="size-4" />, onClick: () => { editor.chain().focus().toggleHighlight().run(); return true; }, tooltip: "Highlight" },
+    {
+      icon: <LinkIcon className="size-4" />,
+      onClick: () => {
+        const url = window.prompt("Enter URL");
+        if (url) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+        return true;
+      },
+      tooltip: "Insert Link",
+    },
+  ];
+
+  const alignment = [
+    { icon: <AlignLeft className="size-4" />, onClick: () => { editor.chain().focus().setTextAlign("left").run(); return true; }, tooltip: "Left Align" },
+    { icon: <AlignCenter className="size-4" />, onClick: () => { editor.chain().focus().setTextAlign("center").run(); return true; }, tooltip: "Center Align" },
+    { icon: <AlignRight className="size-4" />, onClick: () => { editor.chain().focus().setTextAlign("right").run(); return true; }, tooltip: "Right Align" },
+    { icon: <AlignJustify className="size-4" />, onClick: () => { editor.chain().focus().setTextAlign("justify").run(); return true; }, tooltip: "Justify" },
+  ];
+
+ // ===== Track text selection for popup =====
+useEffect(() => {
+  const handler = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      setSelectionToolbarVisible(false);
+      return;
+    }
+
+    // ✅ Ensure selection belongs to the editor only
+    const editorEl = editor.view.dom;
+    const anchorNode = selection.anchorNode;
+    const focusNode = selection.focusNode;
+
+    if (
+      !editorEl.contains(anchorNode) ||
+      !editorEl.contains(focusNode)
+    ) {
+      setSelectionToolbarVisible(false);
+      return;
+    }
+
+    // ✅ Show toolbar if selection is inside editor
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    setSelectionPosition({ top: rect.top - 50 + window.scrollY, left: rect.left + window.scrollX });
+    setSelectionToolbarVisible(true);
+  };
+
+  document.addEventListener("selectionchange", handler);
+  return () => document.removeEventListener("selectionchange", handler);
+}, [editor]);
+
+
+  const renderGroup = (group: typeof undoRedo) => (
+    <div className="flex items-center border-r border-border-secondary overflow-hidden">
+      {group.map((btn, i) => (
+        <Toggle key={i} pressed={false} onPressedChange={btn.onClick}>
+          <div title={btn.tooltip} className="px-2 py-1 hover:bg-bg cursor-pointer">
+            {btn.icon}
+          </div>
         </Toggle>
       ))}
     </div>
+  );
+
+  return (
+    <>
+      {/* Main Toolbar */}
+      <div className="flex flex-wrap gap-2 bg-bg-dark border-b border-border-secondary p-2 rounded-t-lg">
+        {renderGroup(undoRedo)}
+        <div className="flex items-center border-r border-border-secondary overflow-hidden">
+          {headerListQuoteCode.map((btn, i) => (
+            <div key={i} className="relative">
+              <Toggle pressed={false} onPressedChange={btn.onClick}>
+                <div title={btn.tooltip} className="px-2 py-1 hover:bg-bg cursor-pointer">{btn.icon}</div>
+              </Toggle>
+              {btn.dropdown && (btn === headerListQuoteCode[0] ? showHeadings : showLists) && btn.dropdown}
+            </div>
+          ))}
+        </div>
+        {renderGroup(formatting)}
+        {renderGroup(alignment)}
+        {/* Color Picker */}
+        <div className="relative">
+          <Toggle pressed={false} onPressedChange={() => setShowColors(!showColors)}>
+            <div title="Text Color" className="px-2 py-1 hover:bg-bg cursor-pointer">
+              <Palette className="size-4" />
+            </div>
+          </Toggle>
+
+          {showColors && (
+            <div className="absolute top-9 left-0 grid grid-cols-7 gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-42 shadow-md z-50">
+              {colors.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor(c).run();
+                    setShowColors(false);
+                    return true;
+                  }}
+                  className="w-5 h-5 cursor-pointer rounded-full border border-bg"
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  editor.chain().focus().unsetColor().run();
+                  setShowColors(false);
+                  return true;
+                }}
+                className="col-span-7 mt-1 text-xs cursor-pointer text-center py-1 rounded bg-bg hover:bg-bg-dark border border-border-secondary"
+              >
+                Reset
+              </button>
+            </div>   
+          )}
+        </div>
+
+      </div>
+      
+
+      {/* Selection Popup Toolbar */}
+      {selectionToolbarVisible && (
+        <div
+          className="absolute z-50 flex flex-wrap gap-2 p- bg-bg-dark border border-border-secondary rounded-lg shadow-md"
+          style={{ top: selectionPosition.top, left: selectionPosition.left }}
+        >
+          {renderGroup(formatting)}
+          {renderGroup(alignment)}
+        </div>
+      )}
+    </>
   );
 };
 

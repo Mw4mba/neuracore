@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/app/lib/supabase/server"; // adjust path if your client is different
+import { createClient } from "@/app/lib/supabase/server"; 
 
 // GET /api/profile/:id
 export async function GET(
