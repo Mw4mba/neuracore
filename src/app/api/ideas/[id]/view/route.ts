@@ -1,14 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const supabase = await createClient();
-  const { id } = params;
+interface Params {
+  params: Promise<{ id: string }>;
+}
 
+export async function POST(req: NextRequest, { params }: Params) {
   try {
+    const supabase = await createClient();
+
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: "Missing idea ID" }, { status: 400 });
+    }
+
     // Fetch the current view count
     const { data: idea, error: fetchError } = await supabase
       .from("ideas")
@@ -22,7 +27,7 @@ export async function POST(
     }
 
     // Increment locally
-    const newViewCount = (idea.view_count || 0) + 1;
+    const newViewCount = (idea?.view_count || 0) + 1;
 
     // Update the idea
     const { error: updateError } = await supabase
@@ -35,41 +40,9 @@ export async function POST(
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ view_count: newViewCount });
-  } catch (err) {
+    return NextResponse.json({ view_count: newViewCount }, { status: 200 });
+  } catch (err: any) {
     console.error("Server error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Internal Server Error" }, { status: 500 });
   }
 }
-
-
-
-
-// function version doesnt work being table name in function isnt passed as a parameter so it is null
-// import { NextResponse } from "next/server";
-// import { createClient } from "@/app/lib/supabase/server"; 
-
-// export async function POST(
-//   request: Request,
-//   { params }: { params: { id: string } }
-// ) {
-//   const supabase = await createClient();
-//   const { id } = params;
-
-//   try {
-//     const { data, error } = await supabase.rpc("increment_counter", {
-//       row_id: id,
-//       counter_name: "view_count",
-//     });
-
-//     if (error) {
-//       console.error("Error incrementing view count:", error);
-//       return NextResponse.json({ error: error.message }, { status: 500 });
-//     }
-
-//     return NextResponse.json({ view_count: data });
-//   } catch (err) {
-//     console.error("Server error:", err);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
