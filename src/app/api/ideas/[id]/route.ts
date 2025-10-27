@@ -6,7 +6,7 @@ interface Params {
 }
 
 export async function GET(req: NextRequest, { params }: Params) {
-  const { id } = await params; // <-- await the promise
+  const { id } = await params; // await the promise
 
   if (!id) {
     return NextResponse.json({ error: "Missing idea id" }, { status: 400 });

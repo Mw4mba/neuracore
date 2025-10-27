@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import SubmitChallengeForm from '@/components/submit-challenge/SubmitChallengeForm';
+import SubmitChallengeForm from '@/components/submit-challenge/page';
 
 const SubmitChallengePage = () => {
   return (
