@@ -1,22 +1,32 @@
 import { createClient } from "@/app/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  const supabase = await createClient();
+interface Params {
+  params: Promise<{ id: string }>;
+}
 
-  const { data: ideas, error } = await supabase
-    .from("ideas")
-    .select("*")
-    .eq("author", id)
-    .order("created_at", { ascending: false });
+export async function GET(req: NextRequest, { params }: Params) {
+  const { id } = await params; // await the promise
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!id) {
+    return NextResponse.json({ error: "Missing author id" }, { status: 400 });
   }
 
-  return NextResponse.json(ideas, { status: 200 });
+  try {
+    const supabase = await createClient();
+    const { data: ideas, error } = await supabase
+      .from("ideas")
+      .select("*")
+      .eq("author", id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(ideas ?? [], { status: 200 });
+  } catch (err: any) {
+    console.error("Error fetching user's ideas:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }
