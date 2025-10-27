@@ -2,8 +2,10 @@
 
 import { Building, GraduationCap, X } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function OnboardingPage() {
+  const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<"innovator" | "recruiter" | null>(null);
   const [fullName, setFullName] = useState("");
   const [orgName, setOrgName] = useState("");
@@ -22,21 +24,41 @@ export default function OnboardingPage() {
     setSkills(skills.filter((s) => s !== skill));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedRole === "innovator" && !fullName.trim()) return alert("Please enter your full name.");
     if (selectedRole === "recruiter" && !orgName.trim()) return alert("Please enter your organisation name.");
+    if (!selectedRole) return alert("Please select a role.");
 
-    console.log({
-      role: selectedRole,
-      name: selectedRole === "innovator" ? fullName : orgName,
+    const updates: Record<string, any> = {
+      role: selectedRole, 
       bio,
-      skills: selectedRole === "innovator" ? skills : [],
-    });
+    };
+
+    if (selectedRole === "innovator") updates.full_name = fullName;
+    if (selectedRole === "innovator") updates.skills = skills;
+
+    try {
+      const res = await fetch("/api/profile/setup/", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update profile");
+
+      alert("Profile updated successfully!");
+      console.log(data);
+      router.push("/trending-ideas");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    }
   };
 
   return (
     <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-4 py-8">
-      <h1 className="text-2xl font-bold text-white mb-6 text-center">
+      <h1 className="text-2xl font-bold text-text-primary mb-6 text-center">
         Welcome! Let's set up your account
       </h1>
 
@@ -44,10 +66,10 @@ export default function OnboardingPage() {
         {/* Innovator Card */}
         <div
           onClick={() => setSelectedRole("innovator")}
-          className={`flex-1 cursor-pointer p-6 rounded-xl border transition-all text-center
+          className={`flex-1 cursor-pointer bg-bg-dark p-6 rounded-xl border transition-all text-center
             ${selectedRole === "innovator" 
               ? "border-border-secondary bg-bg-dark scale-105" 
-              : "border-gray-500 hover:border-brand-red"}`}
+              : "border-border-secondary  hover:border-brand-red"}`}
         >
           <GraduationCap size={80} className="mx-auto stroke-1 mb-3" />
           <h2 className="text-xl font-semibold text-text-primary mb-2">I’m an Innovator</h2>
@@ -59,7 +81,7 @@ export default function OnboardingPage() {
         {/* Recruiter Card */}
         <div
           onClick={() => setSelectedRole("recruiter")}
-          className={`flex-1 cursor-pointer p-6 rounded-xl border transition-all text-center
+          className={`flex-1 cursor-pointer bg-bg-dark p-6 rounded-xl border transition-all text-center
             ${selectedRole === "recruiter" 
               ? "border-border-secondary bg-bg-dark scale-105" 
               : "border-border-secondary hover:border-brand-red"}`}
