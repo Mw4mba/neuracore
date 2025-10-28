@@ -14,7 +14,7 @@ const Signup = () => {
           <SignupForm />
         </div>
       </section>
-      <section className="flex bg-[#1E1E1E] flex-col h-screen w-full justify-center items-center">
+      <section className="flex bg-[#1E1E1E] flex-col min-h-screen w-full justify-center items-center">
         <ServiceCards />
         <GetReady />
       </section>

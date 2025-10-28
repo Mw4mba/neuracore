@@ -57,7 +57,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-[4vw] md:px-[10vw] py-8">
       <h1 className="text-2xl font-bold text-text-primary mb-6 text-center">
         Welcome! Let's set up your account
       </h1>
@@ -146,7 +146,7 @@ export default function OnboardingPage() {
                 />
                 <button
                   onClick={addSkill}
-                  className="px-4 py-2 bg-brand-red hover:bg-brand-red/80 text-white rounded transition"
+                  className="px-4 py-2 cursor-pointer bg-brand-red hover:bg-brand-red/80 text-white rounded transition"
                 >
                   Add
                 </button>
@@ -168,12 +168,15 @@ export default function OnboardingPage() {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            <button className="flex-1 py-3 rounded border border-border-secondary text-text-primary hover:bg-bg-dark/50 transition">
+            <button 
+             className="flex-1 py-3 rounded border border-border-secondary cursor-pointer text-text-primary hover:bg-bg-dark/50 transition"
+             onClick={() => router.push("/trending-ideas")}
+             >
               Skip
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 py-3 bg-brand-red hover:bg-brand-red/80 text-white rounded transition"
+              className="flex-1 py-3 bg-brand-red cursor-pointer hover:bg-brand-red/80 text-white rounded transition"
             >
               Continue
             </button>

@@ -51,7 +51,7 @@ const Tiptap: React.FC<TiptapProps> = ({ content = "", onChange }) => {
     editorProps: {
       attributes: {
         class:
-          "editor w-full min-h-70 bg-bg-dark  border-border-secondary  p-4 focus-within:ring-2 focus-within:ring-brand-primary transition-all",
+          "editor w-full min-h-70 bg-bg-dark  border-border-secondary   px-1.5 py-4 focus-within:ring-2 focus-within:ring-brand-primary transition-all",
       },
     },
     onUpdate: ({ editor }) => {

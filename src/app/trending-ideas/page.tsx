@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IdeaGrid from "@/components/TrendingIdeas/IdeaGrid";
 import TrendingHeader from "@/components/TrendingIdeas/TrendingHeader";
 import { withAuth } from "@/components/withAuth";
 import { useSession } from "@/hooks/useSession";
 import IdeasFilter from "@/components/TrendingIdeas/IdeasFilter";
+import Link from "next/link";
+import { toast } from "sonner";
+import { PenLine } from "lucide-react";
 
 function TrendingIdeas() {
   const { user } = useSession(false); // false means auth is not required
@@ -14,6 +17,12 @@ function TrendingIdeas() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState("");
+  const [profile, setProfile] = useState<{
+    full_name?: string;
+    username?: string;
+    avatar_url?: string;
+    role?: string;
+  } | null>(null);
 
   const categories = [
     "All",
@@ -55,7 +64,26 @@ function TrendingIdeas() {
     fetchIdeas();
   }, [query, selected]);
 
-  // 🔥 Fetch all ideas for trending (unfiltered)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/profile/get");
+        if (!res.ok) {
+          toast.warning("Not logged in or failed to fetch profile");
+          return;
+        }
+        const data = await res.json();
+        setProfile(data.user || data); 
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+  
+    const profileRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const fetchTrending = async () => {
       try {
@@ -63,7 +91,7 @@ function TrendingIdeas() {
         const data = await res.json();
 
         if (res.ok) {
-          // ✅ Only ideas with more than 2 likes are trending
+        
           const trending = (data.ideas || []).filter(
             (idea: { likes: number }) => idea.likes > 1
           );
@@ -78,8 +106,7 @@ function TrendingIdeas() {
   }, []);
 
   return (
-    <div className="w-full py-5 md:py-10 min-h-screen bg-bg">
-      {/* 🔥 Trending header always global, not filtered */}
+    <div className="w-full relative py-5 md:py-10 min-h-screen bg-bg">
       <TrendingHeader ideas={trendingIdeas} />
 
       <IdeasFilter
@@ -95,6 +122,25 @@ function TrendingIdeas() {
       ) : (
         <IdeaGrid ideas={ideas} />
       )}
+      {profile?.role === "user" && (
+      <Link 
+        href="/submit-idea"
+        className="fixed bottom-5 right-5 md:hidden px-5 py-5 bg-text-primary rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+        
+      >
+        <span className="text-3xl font-bold text-bg"><PenLine size={16} /></span>
+      </Link>
+      )}
+      {profile?.role === "moderator" && (
+      <Link 
+        href="/submit-challenge"
+        className="fixed bottom-5 right-5 md:hidden px-5 py-5 bg-text-primary rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+        
+      >
+        <span className="text-3xl font-bold text-bg"><PenLine size={16} /></span>
+      </Link>
+      )}
+
     </div>
   );
 }

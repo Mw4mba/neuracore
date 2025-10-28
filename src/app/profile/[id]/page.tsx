@@ -118,7 +118,7 @@ const ProfileView: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-8 text-text-primary bg-bg px-[2vw] md:px-[10vw]">
+    <div className="min-h-screen pb-8 text-text-primary bg-bg px-[4vw] md:px-[10vw]">
       <div className="container mx-auto px-4 py-8 ">
         
         <button

@@ -12,7 +12,7 @@ import JoinedChallenges from "@/components/dashboard/JoinedChallenges";
 
 function DashboardPage() {
   return (
-    <main className="py-8 px-[2vw] md:px-[10vw] bg-[var(--color-bg)]">
+    <main className="py-8 px-[4vw] md:px-[10vw] bg-[var(--color-bg)]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Views"

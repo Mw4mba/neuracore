@@ -89,7 +89,7 @@ const Navbar = () => {
         return;
       }
       const data = await res.json();
-      setProfile(data.user || data); // depending on your API shape
+      setProfile(data.user || data); 
     } catch (err) {
       console.error("Error fetching profile:", err);
     }

@@ -162,7 +162,7 @@ function Idea() {
   if (!idea) return <p className="text-center py-20">Idea not found.</p>;
 
   return (
-    <div className="w-full px-[2vw] md:px-[10vw] pb-8 min-h-screen bg-bg">
+    <div className="w-full px-[4vw] md:px-[10vw] pb-8 min-h-screen bg-bg">
       <IdeaHeader
         coverImageUrl={idea.cover_img || ""}
         categories={[idea.category]}

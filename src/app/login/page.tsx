@@ -52,8 +52,8 @@ const Signin = () => {
               innovation platform.
             </p>
 
-            <div className="flex items-start text-black w-full flex-col md:flex-row gap-2 md:items-center">
-              <div className="group min-w-28   flex items-center px-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0 border-brand-red border rounded-full">
+            <div className="flex items-start text-black w-full flex-row gap-2 md:items-center">
+              <div className="group min-w-28  w-full flex items-center px-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0 border-brand-red border rounded-full">
                 <Check
                   className="text-btn-primary group-hover:text-white"
                   size={12}
@@ -61,7 +61,7 @@ const Signin = () => {
                 <p>Innovation Platform</p>
               </div>
 
-              <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0.5 border-brand-red border rounded-full">
+              <div className="group min-w-28 w-full flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0.5 border-brand-red border rounded-full">
                 <Check
                   className="text-btn-primary group-hover:text-white"
                   size={12}
@@ -69,7 +69,7 @@ const Signin = () => {
                 <p>Collaborative tools</p>
               </div>
 
-              <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0.5 border-brand-red border rounded-full">
+              <div className="group min-w-28 w-full flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-btn-primary transition-all duration-300 text-[10px] gap-1 p-0.5 border-brand-red border rounded-full">
                 <Check
                   className="text-btn-primary group-hover:text-white"
                   size={12}
