@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Filters from "@/components/challengesView/Filters";
 import ChallengeGrid from "@/components/challengesView/ChallengeGrid";
+import { toast } from "sonner";
+import { PenLine } from "lucide-react";
 
 interface Challenge {
   id: string;
@@ -76,6 +78,12 @@ const mockChallenges: Challenge[] = [
 const Challenges: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
+  const [profile, setProfile] = useState<{
+      full_name?: string;
+      username?: string;
+      avatar_url?: string;
+      role?: string;
+    } | null>(null);
 
   const filteredChallenges = mockChallenges.filter((challenge) => {
     const categoryMatch =
@@ -86,6 +94,25 @@ const Challenges: React.FC = () => {
       challenge.difficulty.toLowerCase() === selectedDifficulty;
     return categoryMatch && difficultyMatch;
   });
+  useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const res = await fetch("/api/profile/get");
+          if (!res.ok) {
+            toast.warning("Not logged in or failed to fetch profile");
+            return;
+          }
+          const data = await res.json();
+          setProfile(data.user || data); 
+        } catch (err) {
+          console.error("Error fetching profile:", err);
+        }
+      };
+    
+      fetchProfile();
+    }, []);
+    
+      const profileRef = useRef<HTMLDivElement>(null);
 
   const getDifficultyColor = (difficulty: string) => {
     const colors: Record<string, string> = {
@@ -100,7 +127,7 @@ const Challenges: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg text-text-primary">
       {/* Content */}
-      <main className="max-w-7xl px-[2vw] md:px-[10vw] mx-auto pt-28 pb-16">
+      <main className="max-w-7xl px-[4vw] md:px-[10vw] mx-auto pt-16 pb-16">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
           <div>
@@ -109,12 +136,14 @@ const Challenges: React.FC = () => {
               Participate in challenges and win amazing prizes
             </p>
           </div>
-          <Link
-            href="/recruiter/submit-challenge"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-btn-primary text-white font-medium hover:bg-btn-primary-hover transition"
-          >
-            <span className="text-lg">＋</span> Submit Challenge
-          </Link>
+          {profile?.role === "moderator" && (
+              <Link
+                href="/recruiter/submit-challenge"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-btn-primary text-white font-medium hover:bg-btn-primary-hover transition"
+              >
+                <PenLine size={16} /> Submit Challenge
+              </Link>
+            )}
         </div>
         <Filters
           selectedCategory={selectedCategory}

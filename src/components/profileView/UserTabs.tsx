@@ -1,13 +1,15 @@
 "use client";
-import React, { useState } from "react";
-import { Lightbulb, Trophy, Award, ArrowUp, MessageCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Lightbulb, Trophy, Award, ArrowUp, MessageCircle, ThumbsUp } from "lucide-react";
+import Link from "next/link";
 
 interface Idea {
-  id: number;
+  id: string;
   title: string;
   category: string;
-  votes: number;
-  comments: number;
+  summary: string;
+  likes: number;
+  comments_count: number;
 }
 
 interface Challenge {
@@ -24,6 +26,34 @@ interface UserTabsProps {
 
 const UserTabs: React.FC<UserTabsProps> = ({ userIdeas, userChallenges }) => {
   const [activeTab, setActiveTab] = useState<"ideas" | "challenges">("ideas");
+  const [totalComments, setTotalComments] = useState<number>(0);
+  useEffect(() => {
+  const fetchCommentsCounts = async () => {
+    try {
+      let total = 0;
+
+      await Promise.all(
+        userIdeas.map(async (idea) => {
+          try {
+            const res = await fetch(`/api/comments/${idea.id}`);
+            if (!res.ok) throw new Error("Failed to fetch comments");
+            const data = await res.json();
+            const commentsCount = Array.isArray(data) ? data.length : data.comments?.length || 0;
+            total += commentsCount;
+          } catch (err) {
+            console.error(`Failed to fetch comments for idea ${idea.id}:`, err);
+          }
+        })
+      );
+
+      setTotalComments(total);
+    } catch (err) {
+      console.error("Failed to calculate total comments:", err);
+    }
+  };
+
+  if (userIdeas.length > 0) fetchCommentsCounts();
+}, [userIdeas]);
 
   return (
     <div className="space-y-4">
@@ -61,20 +91,23 @@ const UserTabs: React.FC<UserTabsProps> = ({ userIdeas, userChallenges }) => {
               key={idea.id}
               className="rounded border border-border-secondary bg-bg-dark p-6 hover:border-border-primary duration-300 transition"
             >
+              <Link href={`/idea/${idea.id}`}>
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-semibold">{idea.title}</h3>
+                <h3 className="text-lg font-semibold">{idea.title}</h3>
                 <span className="text-xs px-2 py-1 bg-bg-gray rounded-md text-text-primary">
                   {idea.category}
                 </span>
               </div>
-              <div className="flex gap-4 text-sm text-[var(--muted-foreground)]">
+              <p className="text-sm text-text-secondary">{idea.summary}</p>
+              <div className="flex gap-4 text-xs mt-2 text-text-secondary">
                 <span className="flex gap-1 items-center">
-                  <ArrowUp size={15} /> {idea.votes} votes
+                  <ThumbsUp size={15} /> {idea.likes || 0} likes
                 </span>
                 <span className="flex gap-1 items-center">
-                  <MessageCircle size={15} /> {idea.comments} comments
+                  <MessageCircle size={15} /> {totalComments || 0} comments
                 </span>
               </div>
+              </Link>
             </div>
           ))}
         </div>

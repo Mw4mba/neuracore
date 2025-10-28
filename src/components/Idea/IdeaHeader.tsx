@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -26,12 +27,22 @@ const IdeaHeader: React.FC<IdeaHeaderProps> = ({
         <ArrowLeft size={16} />
         <p className="font-semibold text-sm">Back to Ideas</p>
       </Link>
-      <div className="w-full h-42 md:h-92 bg-red-950/55 flex justify-center items-center rounded-lg">
-        <img
-          className="w-full h-full object-cover rounded"
+      <div className="w-full relative h-42 md:h-92 flex justify-center items-center rounded-lg">
+        {coverImageUrl ? (
+        <Image
           src={coverImageUrl}
+          fill
+          className="object-cover"
           alt="cover-img"
         />
+      ) : (
+        <Image
+          src="/placeholder.svg"
+          fill
+          className="object-cover"
+          alt="cover-img"
+        />
+      )}
       </div>
       <div className="flex my-4 gap-2">
         {categories.map((cat, i) => (

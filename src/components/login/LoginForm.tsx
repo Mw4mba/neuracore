@@ -1,10 +1,12 @@
 "use client";
+
 import { Eye, EyeClosed } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/auth/session-provider";
 import { createClient } from "@/app/lib/supabase/client";
+import { toast } from "sonner"; // 🔹 import toast
 
 const LoginForm = () => {
   const supabase = createClient();
@@ -45,11 +47,15 @@ const LoginForm = () => {
       // Refresh the session context
       await refreshSession();
 
+      // Show success toast
+      toast.success("Successfully signed in!");
+
       // Get the redirect URL from the query parameters or use a default
       const redirect = searchParams.get('redirect') || '/setup';
       router.push(redirect);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign in');
+      toast.error(err instanceof Error ? err.message : 'Sign in failed');
       setIsLoading(false);
     }
   }
@@ -83,16 +89,15 @@ const LoginForm = () => {
             onChange={handleChange}
             placeholder="username@neura.com"
             className="
-                             text-white 
-                           bg-[#242424] 
-                           rounded border-none outline-none 
-                           px-[1vw] w-full h-8 mt-2 mb-4
-                           placeholder:text-xs 
-                           transition duration-400
-
-                           hover:shadow-[0_0_0_0.15vw_rgba(223,22,22,0.4)]
-                           focus:shadow-[0_0_0_0.15vw_#DF1616]
-                         "
+              text-white 
+              bg-[#242424] 
+              rounded border-none outline-none 
+              px-[1vw] w-full h-8 mt-2 mb-4
+              placeholder:text-xs 
+              transition duration-400
+              hover:shadow-[0_0_0_0.15vw_rgba(223,22,22,0.4)]
+              focus:shadow-[0_0_0_0.15vw_#DF1616]
+            "
           />
 
           <label
@@ -111,16 +116,15 @@ const LoginForm = () => {
               required
               placeholder="Enter your password"
               className="
-                           text-white 
-                           bg-[#242424] 
-                           rounded border-none outline-none 
-                           px-[1vw] w-full h-8 mt-2 mb-4
-                           placeholder:text-xs 
-                           transition duration-400
-
-                           hover:shadow-[0_0_0_0.15vw_rgba(223,22,22,0.4)]
-                           focus:shadow-[0_0_0_0.15vw_#DF1616]
-                         "
+                text-white 
+                bg-[#242424] 
+                rounded border-none outline-none 
+                px-[1vw] w-full h-8 mt-2 mb-4
+                placeholder:text-xs 
+                transition duration-400
+                hover:shadow-[0_0_0_0.15vw_rgba(223,22,22,0.4)]
+                focus:shadow-[0_0_0_0.15vw_#DF1616]
+              "
             />
             <button
               type="button"
@@ -132,10 +136,10 @@ const LoginForm = () => {
           </div>
         </div>
 
-                <button
+        <button
           type="submit"
           disabled={isLoading}
-          className="bg-gradient-to-tr from-[#fe6c3c] to-[#fc3838] text-white font-medium py-2 px-4 rounded-lg mt-8 w-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="bg-gradient-to-tr cursor-pointer from-[#fe6c3c] to-[#fc3838] text-white font-medium py-2 px-4 rounded-lg mt-8 w-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {isLoading ? (
             <>

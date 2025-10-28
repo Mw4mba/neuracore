@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { TrendingUp } from "lucide-react";
+import Image from "next/image";
 
 interface Idea {
   id: number;
@@ -127,11 +128,14 @@ const TrendingCarousel: React.FC = () => {
               className="flex-shrink-0 w-[85%] sm:w-1/2 lg:w-1/3 transition-all duration-500 hover:scale-[1.02]"
             >
               <div className="relative bg-surface rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-500">
-                <img
-                  src={idea.coverImage}
-                  alt={idea.title}
-                  className="w-full h-48 object-cover"
-                />
+                <div className="relative w-full h-48">
+                  <Image
+                    src={idea.coverImage}
+                    alt={idea.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent p-4 flex flex-col justify-end">
                   <span className="bg-btn-primary text-white text-xs font-semibold px-2 py-1 rounded w-fit mb-2 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" /> Trending

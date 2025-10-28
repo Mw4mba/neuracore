@@ -2,7 +2,13 @@
 import React, { useState } from "react";
 import { Heart, HeartOff, UserCheck, UserPlus, Share2 } from "lucide-react";
 
-const ChallengeActions: React.FC = () => {
+interface ChallengeActionsProps {
+  profile_role?: string;
+}
+
+const ChallengeActions: React.FC<ChallengeActionsProps> = ({
+  profile_role
+}) => {
   const [liked, setLiked] = useState(false);
   const [joined, setJoined] = useState(false);
   const [shared, setShared] = useState(false);
@@ -10,21 +16,24 @@ const ChallengeActions: React.FC = () => {
   return (
     <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-4">
       {/* Join Button */}
-      <button
-        onClick={() => setJoined(!joined)}
-        className={`
-          flex items-center justify-center gap-2 rounded-lg transition-all
-          text-xs sm:text-sm cursor-pointer font-medium px-5 py-3 
-          ${
-            joined
-              ? "bg-text-primary text-bg hover:bg-text-primary/30"
-              : "bg-bg text-text-primary hover:bg-neutral-400 border-1 border-text-primary"
-          }
-        `}
-      >
-        {joined ? <UserCheck size={16} /> : <UserPlus size={16} />}
-        {joined ? "Joined" : "Join Challenge"}
-      </button>
+      {profile_role === "user" && (
+        <button
+          onClick={() => setJoined(!joined)}
+          className={`
+            flex items-center justify-center gap-2 rounded-lg transition-all
+            text-xs sm:text-sm cursor-pointer font-medium px-5 py-3 
+            ${
+              joined
+                ? "bg-text-primary text-bg hover:bg-text-primary/30"
+                : "bg-bg text-text-primary hover:bg-neutral-400 border-1 border-text-primary"
+            }
+          `}
+        >
+          {joined ? <UserCheck size={16} /> : <UserPlus size={16} />}
+          {joined ? "Joined" : "Join Challenge"}
+        </button>
+        )}
+      
 
       {/* Like Button */}
       <button

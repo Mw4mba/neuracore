@@ -1,65 +1,24 @@
 import { Check } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 const LeftSide = () => {
   return (
     <>
-      <div className="flex flex-col justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
+      <div className="flex flex-col md:pt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
         {/* Logo*/}
-        <svg
-          className="w-40 md:w-48 h-auto"
-          viewBox="0 0 294 62"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M207.35 61.945L198.54 70.755L197.92 71.375H180.31L180.94 70.755L184.59 67.105L192.76 58.925L197.03 54.655L198.54 53.145L204.32 58.925L207.35 61.945Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M207.35 18.225L200.05 25.515L198.54 27.025L197.03 25.525V25.515L189.74 18.235L184.59 23.385V40.985L172.14 53.435V18.235L177.29 13.075L180.94 9.425L184.59 5.775L189.74 0.625L197.03 7.915L198.54 9.425L202.19 13.075L207.35 18.225Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M12.45 59.815V71.375H6.41H5.8H5.16H0V12.155L5.79 17.935L9.43 21.585L12.45 24.605L14.59 26.735L21.88 34.025L23.39 35.535L24.9 34.035V34.025L32.19 26.735L37.35 21.585V56.795L32.2 61.945L14.59 44.345L12.45 42.205V58.925"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M228.9 28.255C227.87 26.305 226.43 24.785 224.57 23.715C222.7 22.635 220.52 22.095 218.03 22.095C215.54 22.095 213.36 22.635 211.49 23.715C209.63 24.785 208.18 26.305 207.16 28.255C206.13 30.205 205.61 32.495 205.61 35.115V45.135C205.61 47.735 206.13 50.025 207.16 51.985C208.18 53.945 209.63 55.465 211.49 56.545C213.36 57.615 215.53 58.155 218.03 58.155C220.53 58.155 222.7 57.615 224.57 56.545C226.43 55.465 227.87 53.945 228.9 51.985C229.93 50.025 230.45 47.735 230.45 45.135V35.115C230.45 32.495 229.93 30.205 228.9 28.255ZM225.37 45.305C225.37 47.695 224.7 49.625 223.36 51.085C222.03 52.545 220.25 53.275 218.03 53.275C215.81 53.275 214.05 52.545 212.71 51.085C211.36 49.625 210.69 47.695 210.69 45.305V34.945C210.69 32.535 211.36 30.605 212.71 29.155C214.05 27.705 215.83 26.975 218.03 26.975C220.23 26.975 222.03 27.705 223.36 29.155C224.7 30.605 225.37 32.535 225.37 34.945V45.305Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M225.37 34.945V45.305C225.37 47.695 224.7 49.625 223.36 51.085C222.03 52.545 220.25 53.275 218.03 53.275C215.81 53.275 214.05 52.545 212.71 51.085C211.36 49.625 210.69 47.695 210.69 45.305V34.945C210.69 32.535 211.36 30.605 212.71 29.155C214.05 27.705 215.83 26.975 218.03 26.975C220.23 26.975 222.03 27.705 223.36 29.155C224.7 30.605 225.37 32.535 225.37 34.945Z"
-            fill="#E22020"
-          />
-          <path
-            d="M237.98 57.785V22.435H242.94V57.795H237.98V57.785ZM240.14 42.845V38.135H252.19C253.63 38.135 254.79 37.635 255.66 36.625C256.54 35.625 256.97 34.295 256.97 32.635C256.97 30.975 256.53 29.655 255.66 28.645C254.78 27.645 253.63 27.135 252.19 27.135H240.14V22.425H252C254.06 22.425 255.86 22.855 257.39 23.705C258.93 24.555 260.12 25.745 260.97 27.265C261.82 28.785 262.25 30.575 262.25 32.635C262.25 34.695 261.82 36.465 260.96 37.995C260.1 39.525 258.91 40.715 257.38 41.565C255.85 42.415 254.05 42.845 252 42.845H240.14ZM257.85 57.785L249.76 41.745L254.69 40.625L263.73 57.785H257.85Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M270.42 57.785V22.455H275.38V57.785H270.42ZM272.82 27.165V22.455H293.11V27.165H272.82ZM272.82 42.605V37.895H290.44V42.605H272.82ZM272.82 57.785V53.075H293.11V57.785H272.82Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M56.1102 58.155C52.1702 58.155 49.1202 57.005 46.9602 54.715C44.8002 52.425 43.7202 49.185 43.7202 45.005V22.455H48.6802V45.175C48.6802 47.755 49.3302 49.745 50.6202 51.155C51.9102 52.565 53.7502 53.265 56.1102 53.265C58.4702 53.265 60.3302 52.555 61.6402 51.155C62.9402 49.745 63.6002 47.755 63.6002 45.175V22.455H68.5602V45.005C68.5602 49.185 67.4702 52.425 65.3002 54.715C63.1302 57.005 60.0702 58.155 56.1202 58.155H56.1102Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M76.3203 57.785V22.455H81.2803V57.785H76.3203ZM78.7303 27.165V22.455H99.0203V27.165H78.7303ZM78.7303 42.605V37.895H96.3503V42.605H78.7303ZM78.7303 57.785V53.075H99.0203V57.785H78.7303Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M106.07 57.785V22.435H111.03V57.795H106.07V57.785ZM108.23 42.845V38.135H120.28C121.72 38.135 122.88 37.635 123.75 36.625C124.63 35.625 125.06 34.295 125.06 32.635C125.06 30.975 124.62 29.655 123.75 28.645C122.87 27.645 121.72 27.135 120.28 27.135H108.23V22.425H120.09C122.15 22.425 123.95 22.855 125.48 23.705C127.02 24.555 128.21 25.745 129.06 27.265C129.91 28.785 130.34 30.575 130.34 32.635C130.34 34.695 129.91 36.465 129.05 37.995C128.19 39.525 127 40.715 125.47 41.565C123.94 42.415 122.14 42.845 120.09 42.845H108.23ZM125.94 57.785L117.85 41.745L122.78 40.625L131.82 57.785H125.94Z"
-            fill="#1E1E1E"
-          />
-          <path
-            d="M133.89 57.785L146.92 22.455H151.15L164.18 57.785H158.83L149.04 29.285L139.25 57.785H133.9H133.89ZM139.89 50.035V45.325H158.48V50.035H139.89Z"
-            fill="#1E1E1E"
-          />
-        </svg>
+        
+        <Image src="/neuracore-black-logo.png"
+          alt="Neuracore Logo"
+          width={200} // required unless using fill
+          height={50}
+         
+          className="object-contain" 
+        />
+     
 
         <svg
-          className="w-64 md:w-86 h-auto"
+          className="w-64 md:flex hidden md:w-86 h-auto"
           viewBox="0 0 441 120"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -83,14 +42,14 @@ const LeftSide = () => {
           </defs>
         </svg>
 
-        <p className="text-text-secondary text-sm">
+        <p className="text-text-secondary md:mx-0 mx-4 text-sm">
           Transform ideas into impact. Join our platform where innovation meets
           execution, and every voice contributes to the future of education
           technology.
         </p>
 
-        <div className="flex items-start w-full flex-col md:flex-row gap-2 md:items-center">
-          <div className="group min-w-28   flex items-center px-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+        <div className="flex items-start md:mt-0 mt-4 mb-[50vw] md:mb-0 text-black w-full flex-row gap-2 md:items-center">
+          <div className="group md:min-w-28 w-full   flex items-center px-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}
@@ -98,7 +57,7 @@ const LeftSide = () => {
             <p>Innovation Platform</p>
           </div>
 
-          <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+          <div className="group w-full md:min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}
@@ -106,7 +65,7 @@ const LeftSide = () => {
             <p>Collaborative tools</p>
           </div>
 
-          <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+          <div className="group w-full md:min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}

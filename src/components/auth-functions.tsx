@@ -19,6 +19,7 @@ export const signUpWithEmail = async (email: string, password: string) => {
   });
   if (error) {
     console.log("Error signing up:", error.message);
+    return {error};
   }
-  //return { data, error };
+  return { data };
 };
