@@ -133,7 +133,7 @@ function SubmitIdea() {
   };
 
   return (
-    <div className="bg-bg-dark p-8 rounded border border-border-secondary shadow-md max-w-6xl mx-auto my-8">
+    <div className="bg-bg-dark px-4 py-8 rounded border border-border-secondary shadow-md max-w-6xl mx-2 md:mx-auto my-8">
       <div className="flex items-center gap-3 mb-6">
         <Star className="text-brand-red" size={32} />
         <h1 className="text-3xl font-bold text-text-primary">Submit an Idea</h1>

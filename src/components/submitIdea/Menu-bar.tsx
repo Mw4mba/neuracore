@@ -34,11 +34,19 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
   const [activeDropdown, setActiveDropdown] = useState<DropdownType>(null);
   const [selectionToolbarVisible, setSelectionToolbarVisible] = useState(false);
   const [selectionPosition, setSelectionPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   if (!editor) return null;
 
-  // ===== Heading options =====
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const headingOptions: { level: Level; label: string; icon: React.ReactNode }[] = [
     { level: 1, label: "Heading 1", icon: <Heading1 className="size-4" /> },
     { level: 2, label: "Heading 2", icon: <Heading2 className="size-4" /> },
@@ -51,7 +59,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
     "#A1887F","#E0E0E0","#FFFFFF",
   ];
 
-  // ===== Toolbar groups =====
   const undoRedo = [
     { icon: <Undo className="size-4" />, onClick: () => { editor.chain().focus().undo().run(); return true; }, tooltip: "Undo" },
     { icon: <Redo className="size-4" />, onClick: () => { editor.chain().focus().redo().run(); return true; }, tooltip: "Redo" },
@@ -63,7 +70,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
       onClick: () => setActiveDropdown(activeDropdown === "headings" ? null : "headings"),
       tooltip: "Headers",
       dropdown: (
-        <div className="absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-32 shadow-md z-[2000]">
+        <div className="dropdown-menu absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-32 shadow-md z-[2000]">
           {headingOptions.map((h) => (
             <button
               key={h.level}
@@ -85,7 +92,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
       onClick: () => setActiveDropdown(activeDropdown === "lists" ? null : "lists"),
       tooltip: "Lists",
       dropdown: (
-        <div className="absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-42 shadow-md z-[2000]">
+        <div className="dropdown-menu absolute top-9 left-0 flex flex-col gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-42 shadow-md z-[2000]">
           <button
             type="button"
             onClick={() => { editor.chain().focus().toggleBulletList().run(); setActiveDropdown(null); return true; }}
@@ -139,7 +146,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
     { icon: <AlignJustify className="size-4" />, onClick: () => { editor.chain().focus().setTextAlign("justify").run(); return true; }, tooltip: "Justify" },
   ];
 
-  // ===== Track text selection for popup =====
   useEffect(() => {
     const handler = () => {
       const selection = window.getSelection();
@@ -158,7 +164,18 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
       }
 
       const rect = selection.getRangeAt(0).getBoundingClientRect();
-      setSelectionPosition({ top: rect.top - 50 + window.scrollY, left: rect.left + window.scrollX });
+      const toolbarWidth = 240;
+      const toolbarHeight = 40;
+
+      let left = rect.left + window.scrollX;
+      let top = rect.top - toolbarHeight + window.scrollY - 8;
+
+      if (left + toolbarWidth > window.innerWidth - 8) left = window.innerWidth - toolbarWidth - 8;
+      if (left < 8) left = 8;
+
+      if (top < window.scrollY + 8) top = rect.bottom + window.scrollY + 8;
+
+      setSelectionPosition({ top, left });
       setSelectionToolbarVisible(true);
     };
 
@@ -166,7 +183,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
     return () => document.removeEventListener("selectionchange", handler);
   }, [editor]);
 
-  // ===== Close dropdown when clicking outside =====
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (toolbarRef.current && !toolbarRef.current.contains(e.target as Node)) {
@@ -181,7 +197,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
     <div className="flex items-center border-r border-border-secondary">
       {group.map((btn, i) => (
         <Toggle key={i} pressed={false} onPressedChange={btn.onClick}>
-          <div title={btn.tooltip} className="px-2 py-1 hover:bg-bg cursor-pointer">
+          <div title={btn.tooltip} className="md:px-2 py-1 hover:bg-bg cursor-pointer">
             {btn.icon}
           </div>
         </Toggle>
@@ -191,14 +207,13 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
 
   return (
     <>
-      {/* Main Toolbar */}
-      <div ref={toolbarRef} className="flex flex-wrap gap-2 bg-bg-dark border-b border-border-secondary p-2 rounded-t-lg relative z-[1000]">
+      <div ref={toolbarRef} className="flex flex-wrap md:gap-2 bg-bg-dark border-b border-border-secondary p-2 rounded-t-lg relative z-[1000]">
         {renderGroup(undoRedo)}
         <div className="flex items-center border-r border-border-secondary">
           {headerListQuoteCode.map((btn, i) => (
             <div key={i} className="relative">
               <Toggle pressed={false} onPressedChange={btn.onClick}>
-                <div title={btn.tooltip} className="px-2 py-1 hover:bg-bg cursor-pointer">{btn.icon}</div>
+                <div title={btn.tooltip} className="md:px-2 py-1 hover:bg-bg cursor-pointer">{btn.icon}</div>
               </Toggle>
               {btn.dropdown && (
                 (btn === headerListQuoteCode[0] && activeDropdown === "headings") ||
@@ -207,20 +222,20 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
             </div>
           ))}
         </div>
+        <div className="hidden md:flex">
+          {renderGroup(formatting)}
+          {renderGroup(alignment)}
+        </div>
 
-        {renderGroup(formatting)}
-        {renderGroup(alignment)}
-
-        {/* Color Picker */}
         <div className="relative">
           <Toggle pressed={false} onPressedChange={() => setActiveDropdown(activeDropdown === "colors" ? null : "colors")}>
-            <div title="Text Color" className="px-2 py-1 hover:bg-bg cursor-pointer">
+            <div title="Text Color" className="md:px-2 py-1 hover:bg-bg cursor-pointer">
               <Palette className="size-4" />
             </div>
           </Toggle>
 
           {activeDropdown === "colors" && (
-            <div className="absolute top-9 left-0 grid grid-cols-7 gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-42 shadow-md z-[2000]">
+            <div className="dropdown-menu absolute top-9 left-0 grid grid-cols-7 gap-1 p-2 bg-bg-dark border border-border-secondary rounded-md w-42 shadow-md z-[2000]">
               {colors.map((c) => (
                 <button
                   key={c}
@@ -242,10 +257,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
         </div>
       </div>
 
-      {/* Selection Popup Toolbar */}
       {selectionToolbarVisible && (
         <div
-          className="absolute z-72 flex flex-wrap gap-2 p- bg-bg-dark border border-border-secondary rounded-lg shadow-md"
+          className={`absolute z-[1000] ${
+            isMobile ? "flex flex-col" : "flex flex-wrap md:gap-2"
+          } p-1 bg-bg-dark border border-border-secondary rounded-lg shadow-md`}
           style={{ top: selectionPosition.top, left: selectionPosition.left }}
         >
           {renderGroup(formatting)}

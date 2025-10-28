@@ -50,7 +50,7 @@ const TrendingCarousel: React.FC<Props> = ({ ideas }) => {
   }, []);
 
   return (
-    <section className="bg-gradient-to-b mx-[2vw] md:mx-[10vw] from-bg via-surface/50 py-3 px-1.5 to-bg rounded shadow-inner ">
+    <section className="bg-gradient-to-b mx-[4vw] md:mx-[10vw] from-bg via-surface/50 py-3 px-1.5 to-bg rounded shadow-inner ">
       <div className="text-text-primary flex items-center justify-start gap-1">
           <Lightbulb size={25} className="text-btn-primary" />
           <h1 className="text-lg md:text-2xl font-semibold">Discover Ideas</h1>
