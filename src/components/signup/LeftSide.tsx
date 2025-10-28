@@ -5,7 +5,7 @@ import React from "react";
 const LeftSide = () => {
   return (
     <>
-      <div className="flex flex-col md:pt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
+      <div className="flex flex-col md:mt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
         {/* Logo*/}
         
         <Image src="/neuracore-black-logo.png"
