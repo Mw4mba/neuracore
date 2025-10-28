@@ -15,9 +15,9 @@ const Toggle: React.FC<ToggleProps> = ({
     <button
       type="button"
       onClick={onPressedChange}
-      className={`p-2 rounded-md cursor-pointer border transition-all duration-150 
-        ${pressed ? "bg-border-secondary text-white border-bg-gray" : "bg-bg text-text-primary border-border-secondary"} 
-        hover:bg-btn-primary hover:border-btn-secondary
+      className={`p-2  cursor-pointer rounded transition-all duration-150 
+        ${pressed ? " text-brand-red bg-bg " : " text-text-primary"} 
+        hover:bg-bg hover:text-brand-red
         active:scale-95`}
     >
       {children}

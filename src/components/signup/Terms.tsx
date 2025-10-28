@@ -9,7 +9,7 @@ const Terms: React.FC<TermsProps> = ({ show, onClose }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 md:px-0 px-3 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-bg-gray text-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
         <button
           onClick={onClose}

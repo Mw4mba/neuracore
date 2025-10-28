@@ -4,7 +4,7 @@ import React from "react";
 const ServiceCards = () => {
   const cards = [
     {
-      icon: <CheckCircle size={20} className="ml-3 text-[#DF1616]" />,
+      icon: <CheckCircle size={20} className="ml-3 text-brand-red" />,
       title: "Evaluation & Scoring",
       subtitle: "Assessment Excellence",
       description: `Structured criteria and
@@ -15,7 +15,7 @@ const ServiceCards = () => {
       gradient: "bg-gradient-to-br from-[#1E1E1E] to-[#252525]",
     },
     {
-      icon: <LockIcon size={20} className="ml-3 text-[#DF1616]" />,
+      icon: <LockIcon size={20} className="ml-3 text-brand-red" />,
       title: "Motivation & Recognition",
       subtitle: "Engagement Engine",
       description: `Rewards system with points,
@@ -26,7 +26,7 @@ const ServiceCards = () => {
       gradient: "bg-gradient-to-br from-[#1E1E1E] to-[#252525]",
     },
     {
-      icon: <SearchIcon size={20} className="ml-3 text-[#DF1616]" />,
+      icon: <SearchIcon size={20} className="ml-3 text-brand-red" />,
       title: "Search & Filter",
       subtitle: "Discovery Made Easy",
       description: `Advanced search capabilities
@@ -55,7 +55,7 @@ const ServiceCards = () => {
             <div
               key={index}
               className={`${card.gradient} flex flex-col border-2 pt-8 px-6 pb-12 rounded-lg border-neutral-600/55 flex-1 min-w-[220px] max-w-sm 
-                            transition-all duration-300 hover:scale-102 hover:border-[#df161641]`}
+                            transition-all duration-300 hover:scale-102 hover:border-brand-red`}
             >
               {card.icon}
               <h1 className="mt-8 font-semibold text-sm">{card.title}</h1>

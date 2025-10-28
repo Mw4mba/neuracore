@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { TrendingUp } from "lucide-react";
+import { Lightbulb, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Idea {
   id: number;
   title: string;
   category: string;
-  description: string;
+  summary: string;
   author: string;
   time: string;
   views: string;
@@ -49,9 +50,9 @@ const TrendingCarousel: React.FC<Props> = ({ ideas }) => {
   }, []);
 
   return (
-    <section className="bg-gradient-to-b mx-[2vw] md:mx-[10vw] from-bg via-surface/50 py-3 px-1.5 to-bg rounded shadow-inner ">
+    <section className="bg-gradient-to-b mx-[4vw] md:mx-[10vw] from-bg via-surface/50 py-3 px-1.5 to-bg rounded shadow-inner ">
       <div className="text-text-primary flex items-center justify-start gap-1">
-          <TrendingUp size={25} className="text-btn-primary" />
+          <Lightbulb size={25} className="text-btn-primary" />
           <h1 className="text-lg md:text-2xl font-semibold">Discover Ideas</h1>
         </div>
         <p className="text-xs  text-text-secondary md:text-sm my-4 md:my-8">
@@ -70,12 +71,22 @@ const TrendingCarousel: React.FC<Props> = ({ ideas }) => {
               key={idea.id}
               className="flex-shrink-0 w-[85%] sm:w-1/2 lg:w-1/3 transition-all duration-500 hover:scale-[1.02]"
             >
-              <div className="overflow-hidden rounded-xl shadow-md bg-surface relative">
-                <img
-                  src={idea.imageUrl}
-                  alt={idea.title}
-                  className="w-full h-48 object-cover"
-                />
+              <div className="overflow-hidden rounded-xl h-48 w-full shadow-md bg-surface relative">
+                {idea.imageUrl ? (
+                  <Image
+                    src={idea.imageUrl}
+                    fill
+                    className="object-cover"
+                    alt="cover-img"
+                  />
+                ) : (
+                  <Image
+                    src="./placeholder.svg"
+                    fill
+                    className="object-cover"
+                    alt="cover-img"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent p-4 flex flex-col justify-end">
                   <span className="mb-2 bg-btn-primary/80 text-white text-xs px-2 py-1 w-fit rounded-md flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" /> Trending
@@ -84,7 +95,7 @@ const TrendingCarousel: React.FC<Props> = ({ ideas }) => {
                     {idea.title}
                   </h3>
                   <p className="text-xs text-gray-300 line-clamp-2">
-                    {idea.description}
+                    {idea.summary}
                   </p>
                 </div>
               </div>

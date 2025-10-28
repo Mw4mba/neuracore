@@ -46,7 +46,7 @@ const Leaderboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen px-[2vw] md:px-[10vw] bg-[var(--color-bg)] text-[var(--color-text-primary)]">
+    <div className="min-h-screen px-[4vw] md:px-[10vw] bg-[var(--color-bg)] text-[var(--color-text-primary)]">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">

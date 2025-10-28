@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   MapPin,
@@ -24,46 +24,83 @@ const ProfileView: React.FC = () => {
   const { id } = useParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"ideas" | "challenges">("ideas");
+  const [user, setUser] = useState<any>(null);
+  const [userIdeas, setUserIdeas] = useState<any[]>([]);
 
-  const user = {
-    id: id as string,
-    name: "Sarah Johnson",
-    username: "@sarahj",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    bio: "Innovation enthusiast | Full-stack developer | AI/ML researcher | Building the future one idea at a time",
-    location: "Frank Monquer",
-    website: "franklin-404",
-    joinDate: "January 2024",
-    stats: {
-      ideas: 23,
-      challenges: 8,
-      wins: 5,
-      points: 4250,
-    },
-    skills: ["AI/ML", "React", "Node.js", "Python", "UI/UX", "Blockchain"],
-    achievements: [
-      { id: 1, name: "Top Innovator", icon: Trophy, color: "text-yellow-400" },
-      { id: 2, name: "Challenge Master", icon: Target, color: "text-blue-400" },
-      { id: 3, name: "Community Leader", icon: Award, color: "text-purple-400" },
-    ],
-  };
+  // ✅ Fetch profile by ID
+  useEffect(() => {
+    if (!id) return;
 
-  const userIdeas = [
-    {
-      id: 1,
-      title: "AI-Powered Code Review Assistant",
-      category: "Technology",
-      votes: 234,
-      comments: 45,
-    },
-    {
-      id: 2,
-      title: "Sustainable Food Delivery Network",
-      category: "Sustainability",
-      votes: 189,
-      comments: 32,
-    },
-  ];
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`/api/profile/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user profile");
+        const data = await res.json();
+        setUser(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUser();
+  }, [id]);
+
+  // Fetch ideas by this author
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchUserIdeas = async () => {
+      try {
+        const res = await fetch(`/api/ideas/author/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user's ideas");
+        const data = await res.json();
+        setUserIdeas(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUserIdeas();
+  }, [id]);
+  // const user = {
+  //   id: id as string,
+  //   name: "Sarah Johnson",
+  //   username: "@sarahj",
+  //   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+  //   bio: "Innovation enthusiast | Full-stack developer | AI/ML researcher | Building the future one idea at a time",
+  //   location: "Frank Monquer",
+  //   website: "franklin-404",
+  //   joinDate: "January 2024",
+  //   stats: {
+  //     ideas: 23,
+  //     challenges: 8,
+  //     wins: 5,
+  //     points: 4250,
+  //   },
+  //   skills: ["AI/ML", "React", "Node.js", "Python", "UI/UX", "Blockchain"],
+  //   achievements: [
+  //     { id: 1, name: "Top Innovator", icon: Trophy, color: "text-yellow-400" },
+  //     { id: 2, name: "Challenge Master", icon: Target, color: "text-blue-400" },
+  //     { id: 3, name: "Community Leader", icon: Award, color: "text-purple-400" },
+  //   ],
+  // };
+
+  // const userIdeas = [
+  //   {
+  //     id: 1,
+  //     title: "AI-Powered Code Review Assistant",
+  //     category: "Technology",
+  //     votes: 234,
+  //     comments: 45,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Sustainable Food Delivery Network",
+  //     category: "Sustainability",
+  //     votes: 189,
+  //     comments: 32,
+  //   },
+  // ];
 
   const userChallenges = [
     {
@@ -81,7 +118,7 @@ const ProfileView: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-8 text-text-primary bg-bg px-[2vw] md:px-[10vw]">
+    <div className="min-h-screen pb-8 text-text-primary bg-bg px-[4vw] md:px-[10vw]">
       <div className="container mx-auto px-4 py-8 ">
         
         <button
@@ -96,9 +133,9 @@ const ProfileView: React.FC = () => {
           {/* LEFT COLUMN */}
           <div className="space-y-6">
             <ProfileCard user={user} />
-            <StatsCard user={user} />
+            {/* <StatsCard user={user} />
             <SkillsCard user={user} />
-            <AchievementsCard user={user} />
+            <AchievementsCard user={user} /> */}
           </div>
 
           {/* RIGHT COLUMN */}

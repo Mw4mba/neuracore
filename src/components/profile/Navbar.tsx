@@ -1,14 +1,21 @@
 "use client";
+import { signOut } from "@/lib/auth";
 import {
   AwardIcon,
   BellIcon,
+  CreditCard,
+  GroupIcon,
   HamburgerIcon,
   LayoutDashboard,
   LightbulbIcon,
+  ListChecks,
   LogOut,
   LucideHamburger,
 
+  LucideSettings,
+
   Menu,
+  MessageCircle,
   MoonIcon,
   Plus,
   RocketIcon,
@@ -23,18 +30,44 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [profile, setProfile] = useState<{
+  full_name?: string;
+  username?: string;
+  avatar_url?: string;
+  role?: string;
+} | null>(null);
+
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
+  };
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    const { success, error } = await signOut();
+
+    if (success) {
+      toast.success("Signed out successfully!");
+      router.push("/login"); // redirect after logout
+    } else {
+      console.error("Failed to sign out:", error);
+      toast.error("Sign out failed. Please try again.");
+    }
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -46,6 +79,24 @@ const Navbar = () => {
     setTheme(initialTheme);
     document.documentElement.setAttribute("data-theme", initialTheme);
   }, []);
+
+  useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("/api/profile/get");
+      if (!res.ok) {
+        toast.warning("Not logged in or failed to fetch profile");
+        return;
+      }
+      const data = await res.json();
+      setProfile(data.user || data); 
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    }
+  };
+
+  fetchProfile();
+}, []);
 
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -62,9 +113,10 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const placeholder = "/account.svg";
   
   return (
-    <nav className="h-[9vh] sticky top-0 right-0 left-0 z-30 border-b-2 border-bg-gray md:backdrop-blur-2xl flex justify-between px-[6vw] items-center bg-bg md:bg-bg/30">
+    <nav className="h-[9vh] sticky top-0 right-0 left-0 z-30 border-b-2 border-border-secondary/40 md:backdrop-blur-2xl flex justify-between px-[6vw] items-center bg-bg md:bg-bg/30">
       <div className="flex items-end gap-4">
         <Link href="/trending-ideas" className="flex items-center">
           <Image
@@ -85,12 +137,30 @@ const Navbar = () => {
       <div className="flex p-2 gap-4">
         {/* Desktop Links */}
         <div className="hidden mr-4 md:flex items-center gap-2">
-          <Link
-            href="/dashboard(user)"
-            className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" /> Dashboard
-          </Link>
+          {profile?.role === "user" && (
+            <Link
+              href="/dashboard(user)"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
+          {profile?.role === "moderator" && (
+            <Link
+              href="/recruiter/dashboard"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
+          {profile?.role === "admin" && (
+            <Link
+              href="/admin/dashboard"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
           <Link
             href="/leaderboard"
             className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
@@ -104,31 +174,61 @@ const Navbar = () => {
             <svg className="w-4 h-4" /> Challenges
           </Link>
         </div>
-        <Link
-          href="/submit-idea"
-          className="hidden md:flex items-center justify-center group"
-        >
-          <div
-            className="flex items-center bg-text-primary text-bg-dark-gray 
-            hover:bg-bg-gray hover:text-text-primary rounded-full 
-            px-3 py-2 transition-all duration-500 
-            ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden"
-            style={{ height: "38px" }}
+        {profile?.role === "moderator" && (
+          <Link
+            href="/submit-challenge"
+            className="hidden md:flex items-center justify-center group"
           >
-            <Plus
-              size={19}
-              className="transition-transform duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)] 
-              group-hover:rotate-90"
-            />
-            <span
-              className="inline-block text-sm font-medium overflow-hidden 
-              max-w-0 group-hover:max-w-[90px] group-hover:ml-2
-              transition-all duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+            <div
+              className="flex items-center bg-text-primary text-bg-dark-gray 
+              hover:bg-bg-gray hover:text-text-primary rounded-full 
+              px-3 py-2 transition-all duration-500 
+              ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden"
+              style={{ height: "38px" }}
             >
-              Create Post
-            </span>
-          </div>
-        </Link>
+              <Plus
+                size={19}
+                className="transition-transform duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)] 
+                group-hover:rotate-90"
+              />
+              <span
+                className="inline-block text-sm font-medium overflow-hidden 
+                max-w-0 group-hover:max-w-[120px] group-hover:ml-2
+                transition-all duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+              >
+                Create Challenge
+              </span>
+            </div>
+          </Link>
+        )}
+        {profile?.role === "user" && (
+          <Link
+            href="/submit-idea"
+            className="hidden md:flex items-center justify-center group"
+          >
+            <div
+              className="flex items-center bg-text-primary text-bg-dark-gray 
+              hover:bg-bg-gray hover:text-text-primary rounded-full 
+              px-3 py-2 transition-all duration-500 
+              ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden"
+              style={{ height: "38px" }}
+            >
+              <Plus
+                size={19}
+                className="transition-transform duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)] 
+                group-hover:rotate-90"
+              />
+              <span
+                className="inline-block text-sm font-medium overflow-hidden 
+                max-w-0 group-hover:max-w-[120px] group-hover:ml-2
+                transition-all duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+              >
+                Submit Idea
+              </span>
+            </div>
+          </Link>
+        )}
+        
 
         <Link
           href="/payment"
@@ -145,12 +245,18 @@ const Navbar = () => {
 
         {/* Profile Dropdown */}
         <div className="hidden md:flex items-center relative" ref={profileRef}>
-          <button
+          <div
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className=" cursor-pointer hover:text-bg hover:bg-brand-red rounded-full p-2"
+            className="cursor-pointer rounded-full justify-center items-center flex overflow-hidden h-10 w-10 ring-1 ring-brand-red/50 transition-all"
           >
-            <UserRound size={21} />
-          </button>
+            <Image
+              src={profile?.avatar_url || placeholder}
+              alt="profile-pic"
+              width={35}
+              height={35}
+              className="object-cover"
+            />
+          </div>
           {isProfileOpen && (
             <div className="absolute right-3 top-9 mt-3 w-54 rounded-lg border border-bg-gray bg-bg-dark shadow-lg z-50 p-1">
               <Link
@@ -175,20 +281,27 @@ const Navbar = () => {
                 href="/profile?tab=Settings"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <Settings2Icon size={18} className="text-brand-red" /> Settings
+                <LucideSettings size={18} className="text-brand-red" /> Settings
               </Link>
               <Link
                 href="/profile?tab=Settings#plans"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <TimerReset size={18} className="text-brand-red" /> Plan
+                <CreditCard size={18} className="text-brand-red" /> Plan
               </Link>
               <Link
-                href="/logout"
-                className="flex items-center gap-3 px-5 py-3 text-sm text-brand-red hover:bg-brand-red hover:text-white  rounded-md transition-colors"
+                href="/collab-hub"
+                className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <LogOut size={18} /> Sign Out
+                <MessageCircle size={18} className="text-brand-red" /> CollabHub
               </Link>
+              <button
+                onClick={handleSignOut}
+                disabled={loading}
+                className="flex items-center gap-3 px-5 py-3 text-sm text-brand-red hover:bg-brand-red w-full hover:text-white  rounded-md transition-colors"
+              >
+                <LogOut size={18} /> {loading ? "Signing out..." : "Sign Out"}
+              </button>
             </div>
           )}
         </div>
@@ -217,14 +330,16 @@ const Navbar = () => {
                   />
                 </div>
 
-                <div className="flex items-center gap-3 p-4 border-b border-bg-gray hover:bg-bg-dark-gray transition-colors cursor-pointer rounded-r-full">
+                <Link 
+                 href="/profile"
+                 className="flex items-center gap-3 p-4 border-b border-bg-gray hover:bg-bg-dark-gray transition-colors cursor-pointer rounded-r-full">
                   <div className="bg-bg-dark-gray p-2 rounded-full flex items-center justify-center">
                     <UserRound size={18} />
                   </div>
                   <h1 className="text-text-primary font-semibold">
-                    Jayson Baloyi
+                    {profile?.full_name || "Anonymous User"}
                   </h1>
-                </div>
+                </Link>
 
                 <div className="flex flex-col mt-2">
                   <Link
@@ -237,8 +352,35 @@ const Navbar = () => {
                     href="/challenges"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
                   >
-                    <WeightIcon size={16} className="text-brand-red" /> Challenges
+                    <ListChecks size={16} className="text-brand-red" /> Challenges
                   </Link>
+                  {profile?.role === "user" && (
+                    <Link
+                    href="/dashboard(user)"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
+                  {profile?.role === "admin" && (
+                    <Link
+                    href="/admin/dashboard"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
+                  {profile?.role === "moderator" && (
+                    <Link
+                    href="/recruiter/dashboard"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
                   <Link
                     href="/dashboard(user)"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
@@ -256,7 +398,7 @@ const Navbar = () => {
                     href="/profile?tab=Settings"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
                   >
-                    <Settings2Icon size={16} className="text-brand-red" /> Settings
+                    <Settings size={16} className="text-brand-red" /> Settings
                   </Link>
                   <Link
                     href="/profile?tab=Notifications"
@@ -285,12 +427,13 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col mb-6 mt-4">
-                <Link
-                  href="/logout"
-                  className="flex items-center gap-3 p-4 text-brand-red hover:bg-brand-red hover:text-white rounded-r-full"
-                >
-                  <LogOut size={16} /> Sign Out
-                </Link>
+                <button
+                onClick={handleSignOut}
+                disabled={loading}
+                className="flex items-center gap-3 p-4 text-brand-red hover:bg-brand-red hover:text-white rounded w-full"
+              >
+                <LogOut size={18} /> {loading ? "Signing out..." : "Sign Out"}
+              </button>
               </div>
             </div>
           </div>

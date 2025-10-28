@@ -19,8 +19,7 @@ export async function GET(request: Request) {
     let query = supabase.from("ideas").select(`
         *,
         author:profiles(id, username, avatar_url),
-        comments:comments(count),
-        likes:idea_likes(count)
+        comments:comments(count)
       `);
 
     // Apply filters

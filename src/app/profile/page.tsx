@@ -61,7 +61,7 @@ function UserProfilePage({ params }: { params: { id: string } }) {
   const tabs = ["Profile", "Achievements", "Notifications", "Settings"];
 
   return (
-    <main className="py-8 px-[2vw] md:px-[10vw] bg-bg text-white">
+    <main className="py-8 px-[4vw] md:px-[10vw] bg-bg text-white">
       {/* Tab Navigation */}
       <div className="bg-bg-dark p-2 rounded-lg border border-border-secondary sticky top-4 z-10 w-full">
         <nav className="flex w-full md:justify-around overflow-x-auto md:overflow-x-visible whitespace-nowrap">
