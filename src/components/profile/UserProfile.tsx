@@ -22,6 +22,7 @@ interface Profile {
   bio: string;
   location: string;
   website: string;
+  role?: "user" | "moderator" | "admin";
   created_at?: string;
 }
 
@@ -43,8 +44,23 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     bio: "Passionate about creating innovative solutions.",
     location: "",
     website: "",
+    role: "user",
     created_at: "",
   });
+  // Add this helper function near the top of the component
+  const getRoleLabel = (role?: string) => {
+    switch (role) {
+      case "user":
+        return "Innovator";
+      case "moderator":
+        return "Recruiter";
+      case "admin":
+        return "Admin";
+      default:
+        return "Unknown";
+    }
+  };
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -60,6 +76,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
             bio: data.bio || "No bio yet.",
             location: "",
             website: "",
+            role: data.role || "user",
             created_at: data.created_at || "",
           });
         } else {
@@ -90,7 +107,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           full_name: profile.name,
-          bio: profile.bio,
+          bio: profile.bio
         }),
       });
 
@@ -134,6 +151,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                 </h2>
                 <p className="text-text-secondary text-sm sm:text-base">
                   {profile.email}
+                </p>
+                <p className="text-sm text-text-secondary mt-2">
+                  <span className="font-semibold text-text-secondary">{getRoleLabel(profile.role)}</span>
                 </p>
               </div>
               <button
@@ -180,6 +200,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
           <p className="text-sm text-text-secondary leading-relaxed">
             {profile.bio}
           </p>
+          
         </div>
       )}
 
@@ -208,6 +229,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                   className="w-full p-2 border border-border-secondary rounded-md bg-bg-gray text-text-primary focus:outline-none focus:ring-2 focus:ring-btn-primary"
                 />
               </div>
+
+              
             </div>
 
             {/* Bio */}
