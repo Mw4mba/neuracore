@@ -46,7 +46,7 @@ const LoginForm = () => {
       await refreshSession();
 
       // Get the redirect URL from the query parameters or use a default
-      const redirect = searchParams.get('redirect') || '/trending-ideas';
+      const redirect = searchParams.get('redirect') || '/setup';
       router.push(redirect);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign in');
