@@ -37,7 +37,7 @@ const LeftSide = () => {
               gradientUnits="userSpaceOnUse"
             >
               <stop />
-              <stop offset="1" stop-color="#666666" />
+              <stop offset="1" stopColor="#666666" />
             </linearGradient>
           </defs>
         </svg>
