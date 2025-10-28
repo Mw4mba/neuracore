@@ -52,6 +52,7 @@ export default function RootLayout({
     !pathname.includes("signup") &&
     !pathname.includes("signin") &&
     !pathname.includes("setup") &&
+    !pathname.includes("admin/dashboard") &&
     !pathname.includes("login");
 
   return (

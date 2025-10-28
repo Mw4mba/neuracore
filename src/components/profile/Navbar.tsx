@@ -137,12 +137,30 @@ const Navbar = () => {
       <div className="flex p-2 gap-4">
         {/* Desktop Links */}
         <div className="hidden mr-4 md:flex items-center gap-2">
-          <Link
-            href="/dashboard(user)"
-            className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" /> Dashboard
-          </Link>
+          {profile?.role === "user" && (
+            <Link
+              href="/dashboard(user)"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
+          {profile?.role === "moderator" && (
+            <Link
+              href="/recruiter/dashboard"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
+          {profile?.role === "admin" && (
+            <Link
+              href="/admin/dashboard"
+              className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" /> Dashboard
+            </Link>
+          )}
           <Link
             href="/leaderboard"
             className="text-sm text-text-secondary hover:text-btn-primary-hover flex items-center gap-1"
@@ -312,14 +330,16 @@ const Navbar = () => {
                   />
                 </div>
 
-                <div className="flex items-center gap-3 p-4 border-b border-bg-gray hover:bg-bg-dark-gray transition-colors cursor-pointer rounded-r-full">
+                <Link 
+                 href="/profile"
+                 className="flex items-center gap-3 p-4 border-b border-bg-gray hover:bg-bg-dark-gray transition-colors cursor-pointer rounded-r-full">
                   <div className="bg-bg-dark-gray p-2 rounded-full flex items-center justify-center">
                     <UserRound size={18} />
                   </div>
                   <h1 className="text-text-primary font-semibold">
-                    {profile?.full_name}
+                    {profile?.full_name || "Anonymous User"}
                   </h1>
-                </div>
+                </Link>
 
                 <div className="flex flex-col mt-2">
                   <Link
@@ -334,6 +354,33 @@ const Navbar = () => {
                   >
                     <ListChecks size={16} className="text-brand-red" /> Challenges
                   </Link>
+                  {profile?.role === "user" && (
+                    <Link
+                    href="/dashboard(user)"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
+                  {profile?.role === "admin" && (
+                    <Link
+                    href="/admin/dashboard"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
+                  {profile?.role === "moderator" && (
+                    <Link
+                    href="/recruiter/dashboard"
+                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
+                  >
+                    <LayoutDashboard size={16} className="text-brand-red"/>
+                    Dashboard
+                  </Link>
+                  )}
                   <Link
                     href="/dashboard(user)"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"

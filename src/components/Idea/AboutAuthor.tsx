@@ -21,6 +21,18 @@ const AboutAuthor: React.FC<AuthorProps> = ({
   avatar_url,
   accountType,
 }) => {
+  const getRoleLabel = (role?: string) => {
+    switch (role) {
+      case "user":
+        return "Innovator";
+      case "moderator":
+        return "Recruiter";
+      case "admin":
+        return "Admin";
+      default:
+        return "Unknown";
+    }
+  };
   return (
     <div className="w-full md:w-[80%] flex flex-col px-3 my-6 md:my-8 rounded-lg py-4 bg-bg-dark border border-border-secondary">
       <h1 className="text-lg pl-4 mb-4 md:mb-6 font-semibold text-text-primary">
@@ -59,7 +71,7 @@ const AboutAuthor: React.FC<AuthorProps> = ({
             <p className="text-text-secondary text-sm font-semibold"></p>
           </Link>
           <p className="text-xs text-btn-secondary-hover mb-1 font-semibold">
-            {role}
+            {getRoleLabel(role)}
           </p>
           <p className="text-sm text-text-secondary my-2">{bio}</p>
 

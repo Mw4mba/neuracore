@@ -8,11 +8,12 @@ import { createClient } from "@/app/lib/supabase/client";
 import { toast } from "sonner";
 import TagsInput from "@/components/Tags/TagsInput";
 import TiptapEditor from "@/components/submitIdea/TiptapEditor";
+import { grantAchievementOnce } from "@/lib/grantAchievementOnce";
 
 const categories = ["General", "Tech", "Health", "Education", "Finance"];
 
 interface User {
-  id: string;
+  id?: string;
   email: string;
   full_name: string | null;
 }
@@ -89,48 +90,58 @@ function SubmitIdea() {
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!ideaTitle || !content) {
-      toast.info("Title and Content are required");
-      return;
-    }
+  if (e) e.preventDefault();
+  if (!ideaTitle || !content) {
+    toast.info("Title and Content are required");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const formData = new FormData();
-    formData.append("title", ideaTitle);
-    formData.append("summary", subtitle);
-    formData.append("content", content);
-    formData.append("category", category);
-    formData.append("tags", tags.join(","));
-    formData.append("collaborators", collaborators.join(","));
-    if (coverImg) formData.append("coverImg", coverImg);
+  const formData = new FormData();
+  formData.append("title", ideaTitle);
+  formData.append("summary", subtitle);
+  formData.append("content", content);
+  formData.append("category", category);
+  formData.append("tags", tags.join(","));
+  formData.append("collaborators", collaborators.join(","));
+  if (coverImg) formData.append("coverImg", coverImg);
 
-    try {
-      const res = await fetch("/api/ideas/create", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error("Error creating idea: " + data.error);
-      } else {
-        toast.success("Idea created successfully!");
-        setIdeaTitle("");
-        setSubtitle("");
-        setContent("");
-        setTags([]);
-        setCoverImg(null);
-        setCategory("General");
-        setCollaborators([]);
+  try {
+    const res = await fetch("/api/ideas/create", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error("Error creating idea: " + data.error);
+    } else {
+      toast.success("Idea created successfully!");
+
+      // Reset form
+      setIdeaTitle("");
+      setSubtitle("");
+      setContent("");
+      setTags([]);
+      setCoverImg(null);
+      setCategory("General");
+      setCollaborators([]);
+
+      // ✅ Grant "First Post" achievement only if not already unlocked
+      if (user?.id) {
+        const unlocked = await grantAchievementOnce(user.id, "First Post");
+        if (unlocked) toast.success("Achievement unlocked: First Post!");
       }
-    } catch {
-      toast.error("Something went wrong while submitting your idea.");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch {
+    toast.error("Something went wrong while submitting your idea.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="bg-bg-dark px-4 py-8 rounded border border-border-secondary shadow-md max-w-6xl mx-2 md:mx-auto my-8">
