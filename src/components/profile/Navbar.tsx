@@ -3,14 +3,19 @@ import { signOut } from "@/lib/auth";
 import {
   AwardIcon,
   BellIcon,
+  CreditCard,
   GroupIcon,
   HamburgerIcon,
   LayoutDashboard,
   LightbulbIcon,
+  ListChecks,
   LogOut,
   LucideHamburger,
 
+  LucideSettings,
+
   Menu,
+  MessageCircle,
   MoonIcon,
   Plus,
   RocketIcon,
@@ -84,7 +89,7 @@ const Navbar = () => {
         return;
       }
       const data = await res.json();
-      setProfile(data.user || data); // depending on your API shape
+      setProfile(data.user || data); 
     } catch (err) {
       console.error("Error fetching profile:", err);
     }
@@ -111,7 +116,7 @@ const Navbar = () => {
   const placeholder = "/account.svg";
   
   return (
-    <nav className="h-[9vh] sticky top-0 right-0 left-0 z-30 border-b-2 border-bg-gray md:backdrop-blur-2xl flex justify-between px-[6vw] items-center bg-bg md:bg-bg/30">
+    <nav className="h-[9vh] sticky top-0 right-0 left-0 z-30 border-b-2 border-border-secondary/40 md:backdrop-blur-2xl flex justify-between px-[6vw] items-center bg-bg md:bg-bg/30">
       <div className="flex items-end gap-4">
         <Link href="/trending-ideas" className="flex items-center">
           <Image
@@ -224,7 +229,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center relative" ref={profileRef}>
           <div
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="cursor-pointer rounded-full overflow-hidden h-10 w-10 hover:ring-2 hover:ring-brand-red transition-all"
+            className="cursor-pointer rounded-full justify-center items-center flex overflow-hidden h-10 w-10 ring-1 ring-brand-red/50 transition-all"
           >
             <Image
               src={profile?.avatar_url || placeholder}
@@ -258,19 +263,19 @@ const Navbar = () => {
                 href="/profile?tab=Settings"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <Settings2Icon size={18} className="text-brand-red" /> Settings
+                <LucideSettings size={18} className="text-brand-red" /> Settings
               </Link>
               <Link
                 href="/profile?tab=Settings#plans"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <TimerReset size={18} className="text-brand-red" /> Plan
+                <CreditCard size={18} className="text-brand-red" /> Plan
               </Link>
               <Link
                 href="/collab-hub"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
               >
-                <GroupIcon size={18} className="text-brand-red" /> CollabHub
+                <MessageCircle size={18} className="text-brand-red" /> CollabHub
               </Link>
               <button
                 onClick={handleSignOut}
@@ -327,7 +332,7 @@ const Navbar = () => {
                     href="/challenges"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
                   >
-                    <WeightIcon size={16} className="text-brand-red" /> Challenges
+                    <ListChecks size={16} className="text-brand-red" /> Challenges
                   </Link>
                   <Link
                     href="/dashboard(user)"
@@ -346,7 +351,7 @@ const Navbar = () => {
                     href="/profile?tab=Settings"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
                   >
-                    <Settings2Icon size={16} className="text-brand-red" /> Settings
+                    <Settings size={16} className="text-brand-red" /> Settings
                   </Link>
                   <Link
                     href="/profile?tab=Notifications"
@@ -375,12 +380,13 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col mb-6 mt-4">
-                <Link
-                  href="/logout"
-                  className="flex items-center gap-3 p-4 text-brand-red hover:bg-brand-red hover:text-white rounded-r-full"
-                >
-                  <LogOut size={16} /> Sign Out
-                </Link>
+                <button
+                onClick={handleSignOut}
+                disabled={loading}
+                className="flex items-center gap-3 p-4 text-brand-red hover:bg-brand-red hover:text-white rounded w-full"
+              >
+                <LogOut size={18} /> {loading ? "Signing out..." : "Sign Out"}
+              </button>
               </div>
             </div>
           </div>

@@ -27,18 +27,18 @@ const TagsInput: React.FC<TagsInputProps> = ({ value, onChange }) => {
   };
 
   return (
-    <div className="bg-bg-dark border border-border-secondary rounded-lg p-4 h-64">
-      <h3 className="font-semibold mb-4">Tags</h3>
-      <div className="flex flex-wrap gap-2 mb-4">
+    <div className="bg-bg-dark py-2  rounded-xl ">
+      <div className="flex flex-wrap gap-2 mb-3">
         {value.map((tag) => (
           <div
             key={tag}
-            className="bg-bg-gray text-text-primary text-sm font-medium px-3 py-1 rounded flex items-center gap-2"
+            className="flex items-center gap-2 bg-gradient-to-r from-brand-red/10 to-brand-red/20 text-text-primary text-sm font-medium px-3 py-1 rounded-full border border-border-secondary shadow-sm"
           >
             {tag}
             <button
               onClick={() => removeTag(tag)}
-              className="text-text-secondary hover:text-text-primary"
+              className="text-text-secondary hover:text-brand-red transition-colors"
+              aria-label={`Remove tag ${tag}`}
             >
               &times;
             </button>
@@ -50,10 +50,10 @@ const TagsInput: React.FC<TagsInputProps> = ({ value, onChange }) => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter a tag"
-        className="w-full bg-bg-gray border placeholder:text-text-secondary border-btn-secondary-hover rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-brand-red"
+        placeholder="Type a tag and press Enter"
+        className="w-full bg-bg-dark border border-border-secondary rounded-lg px-3 py-2 placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-red transition"
       />
-      <p className="text-xs text-text-secondary mt-2">
+      <p className="text-xs text-text-secondary mt-1">
         Press Enter to add a tag.
       </p>
     </div>

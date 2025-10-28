@@ -21,6 +21,7 @@
   --color-bg-dark: #1f1f1f;
   --color-bg-light: #f9fafb;
   --color-bg-gray: #2c2c2c;
+  --color-bg-code: var(--color-bg);
   --color-bg-dark-gray: #181b20;
   --color-bg-overlay: rgba(0, 0, 0, 0.4);
 
@@ -56,10 +57,11 @@
 
   /*  Backgrounds */
   --color-bg: #ffffff;
-  --color-bg-dark: #f4f6f8;
+  --color-bg-dark: #f8f8f8;
   --color-bg-light: #ececec;
   --color-bg-gray: #f5f5f5;
   --color-bg-dark-gray: #bdbcbc;
+  --color-bg-code: #2e2e2e;
   --color-bg-overlay: rgb(255, 255, 255);
 
   /*  Text */
@@ -118,6 +120,12 @@ body {
   @apply text-lg font-bold;
 }
 
+.editor-content p {
+  margin-bottom: 1rem;
+}
+
+
+
 .scrollbar-none::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
 }
@@ -127,3 +135,73 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
+.editor blockquote {
+  border-left: 4px solid #6a9955; /* greenish border */
+  padding-left: 12px;
+  margin: 12px 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  background-color: var(--color-bg-dark);
+  border-radius: 4px;
+}
+
+
+.editor .code-block {
+  background-color: var(--color-bg-code); /* dark gray/black background */
+  color: #d4d4d4; /* light gray text */
+  font-family: 'Fira Code', 'Courier New', monospace; /* monospaced font */
+  font-size: 0.875rem; /* slightly smaller than normal text */
+  padding: 12px 16px; /* inner spacing */
+  border-radius: 8px; /* rounded corners */
+  overflow-x: auto; /* horizontal scroll if content is too long */
+  white-space: pre; /* preserve spacing and line breaks */
+  line-height: 1.5; /* readable line spacing */
+  margin: 8px 0; /* spacing from other blocks */
+  border: 1px solid #2c2c2c; /* subtle border */
+}
+
+/* Optional: style for inline code inside code blocks */
+.editor .code-block code {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+/* Optional: add subtle syntax highlighting for lowlight */
+.editor .code-block .keyword {
+  color: #569cd6;
+}
+.editor .code-block .string {
+  color: #d69d85;
+}
+.editor .code-block .comment {
+  color: #6a9955;
+  font-style: italic;
+}
+.editor .code-block .number {
+  color: #b5cea8;
+}
+.editor .code-block .function {
+  color: #dcdcaa;
+}
+.editor .code-block .operator {
+  color: #d4d4d4;
+}
+.editor .code-block .punctuation {
+  color: #d4d4d4;
+}
+
+/* Apply to links inside the editor or displayed HTML */
+.editor a {
+  color: #2b6cb0;   
+  text-decoration: underline;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 4px;   
+  padding: 0 2px;           
+}
+
+.editor a:hover {
+  background-color: rgba(43, 108, 176, 0.1); 
+  color: #2b6cb0;                
+}

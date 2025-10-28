@@ -133,10 +133,10 @@ function SubmitIdea() {
   };
 
   return (
-    <div className="bg-bg-dark p-8 rounded border border-border-secondary shadow-md max-w-4xl mx-auto my-8">
+    <div className="bg-bg-dark px-4 py-8 rounded border border-border-secondary shadow-md max-w-6xl mx-2 md:mx-auto my-8">
       <div className="flex items-center gap-3 mb-6">
         <Star className="text-brand-red" size={32} />
-        <h1 className="text-3xl font-bold text-text-primary">Submit aa Idea</h1>
+        <h1 className="text-3xl font-bold text-text-primary">Submit an Idea</h1>
       </div>
       <p className="text-text-secondary text-sm mb-6">
         Share your innovation idea with the community. Fill out the details
@@ -149,30 +149,51 @@ function SubmitIdea() {
           <label className="block text-sm font-medium text-text-primary mb-1">
             Cover Image
           </label>
-          <label className="bg-bg-gray border-2 border-dashed border-border-secondary rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
-            <UploadCloud size={40} className="text-text-secondary mb-2" />
-            <p className="font-semibold text-sm text-text-primary mb-1">
-              Click or drag & drop
-            </p>
-            <p className="text-xs text-text-secondary">
-              SVG, PNG, JPG or GIF (max 800x400)
-            </p>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </label>
-          {coverImg && (
-            <p className="text-xs mt-1 text-text-secondary">{coverImg.name}</p>
-          )}
+          <div className="relative">
+            <label
+              htmlFor="cover-upload"
+              className="group relative w-full border-2 border-dashed border-border-secondary rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-brand-red transition-colors"
+            >
+              <UploadCloud
+                size={40}
+                className="text-text-secondary mb-2 group-hover:text-brand-red transition-colors"
+              />
+              <p className="font-semibold text-sm text-text-primary mb-1">
+                Click or drag & drop
+              </p>
+              <p className="text-xs text-text-secondary">
+                SVG, PNG, JPG, or GIF (max 800x400)
+              </p>
+              <input
+                id="cover-upload"
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleFileChange}
+              />
+            </label>
+
+            {/* Preview */}
+            {coverImg && (
+              <div className="mt-3">
+                <p className="text-xs text-text-secondary mb-1">{coverImg.name}</p>
+                <div className="border border-border-secondary rounded-md overflow-hidden w-full h-48">
+                  <img
+                    src={URL.createObjectURL(coverImg)}
+                    alt="Cover Preview"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
 
         {/* Title */}
         <div>
           <label className="block text-sm font-medium text-text-primary mb-1">
-            Title *
+            Title <span className="text-brand-red">*</span>
           </label>
           <input
             type="text"
@@ -183,16 +204,16 @@ function SubmitIdea() {
           />
         </div>
 
-        {/* Subtitle */}
+        {/* Summary */}
         <div>
           <label className="block text-sm font-medium text-text-primary mb-1">
-            Subtitle
+            Summary <span className="text-brand-red">*</span>
           </label>
           <input
             type="text"
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-            placeholder="Enter a subtitle"
+            placeholder="Enter a summary"
             className="mt-1 block w-full px-3 py-2 border border-border-secondary rounded-md placeholder:text-text-secondary focus:outline-none focus:ring-brand-red focus:border-brand-red"
           />
         </div>
@@ -200,7 +221,7 @@ function SubmitIdea() {
         {/* Content */}
         <div>
           <label className="block text-sm font-medium text-text-primary mb-1">
-            Content *
+            Content <span className="text-brand-red">*</span>
           </label>
           <TiptapEditor content={content} onChange={setContent} />
         </div>
@@ -224,7 +245,7 @@ function SubmitIdea() {
             className="mt-1 block w-full px-3 py-2 border border-border-secondary rounded-md placeholder:text-text-secondary focus:outline-none focus:ring-brand-red focus:border-brand-red"
           >
             {categories.map((cat) => (
-              <option key={cat} value={cat}>
+              <option key={cat} className="text-text-primary cursor-pointer hover:bg-bg-gray bg-bg" value={cat}>
                 {cat}
               </option>
             ))}

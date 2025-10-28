@@ -5,7 +5,7 @@ import React from "react";
 const LeftSide = () => {
   return (
     <>
-      <div className="flex flex-col justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
+      <div className="flex flex-col md:pt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
         {/* Logo*/}
         
         <Image src="/neuracore-black-logo.png"
@@ -18,7 +18,7 @@ const LeftSide = () => {
      
 
         <svg
-          className="w-64 md:w-86 h-auto"
+          className="w-64 md:flex hidden md:w-86 h-auto"
           viewBox="0 0 441 120"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -42,14 +42,14 @@ const LeftSide = () => {
           </defs>
         </svg>
 
-        <p className="text-text-secondary text-sm">
+        <p className="text-text-secondary md:mx-0 mx-4 text-sm">
           Transform ideas into impact. Join our platform where innovation meets
           execution, and every voice contributes to the future of education
           technology.
         </p>
 
-        <div className="flex items-start text-black w-full flex-col md:flex-row gap-2 md:items-center">
-          <div className="group min-w-28   flex items-center px-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+        <div className="flex items-start md:mt-0 mt-4 mb-[50vw] md:mb-0 text-black w-full flex-row gap-2 md:items-center">
+          <div className="group md:min-w-28 w-full   flex items-center px-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}
@@ -57,7 +57,7 @@ const LeftSide = () => {
             <p>Innovation Platform</p>
           </div>
 
-          <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+          <div className="group w-full md:min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}
@@ -65,7 +65,7 @@ const LeftSide = () => {
             <p>Collaborative tools</p>
           </div>
 
-          <div className="group min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
+          <div className="group w-full md:min-w-28 flex items-center pr-1 hover:scale-105 hover:text-white hover:bg-brand-red transition-all duration-300 text-[10px] gap-1 p-0.5 border-border-primary border rounded-full">
             <Check
               className="text-brand-red group-hover:text-white"
               size={12}

@@ -51,6 +51,7 @@ export default function RootLayout({
   const showNavbar =
     !pathname.includes("signup") &&
     !pathname.includes("signin") &&
+    !pathname.includes("setup") &&
     !pathname.includes("login");
 
   return (

@@ -12,7 +12,7 @@ const IdeaDetails: React.FC<IdeaDetailsProps> = ({ description }) => {
       </h1>
 
       <div
-        className="text-xs md:text-sm text-text-secondary tracking-wider"
+        className="text-xs prose editor md:text-sm text-text-secondary [&>p]:mb-4 [&>p:last-child]:mb-0 tracking-wider"
         dangerouslySetInnerHTML={{ __html: description }}
       />
     </div>
