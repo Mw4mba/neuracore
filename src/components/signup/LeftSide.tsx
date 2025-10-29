@@ -5,7 +5,7 @@ import React from "react";
 const LeftSide = () => {
   return (
     <>
-      <div className="flex flex-col md:mt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
+      <div className="hidden md:flex flex-col md:mt-0 mt-[50vw] justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
         {/* Logo*/}
         
         <Image src="/neuracore-black-logo.png"
@@ -74,6 +74,57 @@ const LeftSide = () => {
           </div>
         </div>
       </div>
+      {/* mobile view */}
+      <div className="flex md:hidden flex-col justify-center items-center w-full min-h-[80vh] px-6 py-8 bg-white text-black gap-6 relative overflow-hidden">
+
+        {/* Decorative gradient circles */}
+        <div className="absolute top-[-50px] left-[-50px] w-48 h-48 bg-brand-red/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-[-60px] right-[-40px] w-60 h-60 bg-brand-red/10 rounded-full blur-2xl animate-pulse-slow"></div>
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 animate-pulse z-10">
+          <Image
+            src="/neuracore-black-logo.png"
+            alt="NeuraCore Logo"
+            width={120}
+            height={100}
+          />
+        </div>
+
+        {/* Headline */}
+        <h2 className="text-3xl font-extrabold text-center text-brand-red/80 z-10 animate-fade-in">
+          Innovate. Share. Collaborate.
+        </h2>
+
+        {/* Description */}
+        <p className="text-center text-text-secondary max-w-xs z-10 animate-fade-in delay-200">
+          Join a platform where creative minds meet. Pitch ideas, get feedback, and bring
+          your innovation to life with the NeuraCore community.
+        </p>
+
+        {/* Features */}
+        <div className="flex flex-col gap-3 mt-6 w-full max-w-xs z-10">
+          {["Pitch Ideas", "Collaborate Globally", "Gain Recognition"].map((feature, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 px-5 py-3 bg-white border border-brand-red/20 rounded-2xl shadow-md animate-slide-up hover:shadow-lg transition-shadow duration-300"
+            >
+              <Check size={20} className="text-brand-red" />
+              <span className="font-semibold text-brand-red">{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Button */}
+        <a
+          href="#signup-form"
+          className="mt-8 px-8 py-3 bg-black text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 z-10"
+        >
+          Join NeuraCore
+        </a>
+      </div>
+
+      
     </>
   );
 };

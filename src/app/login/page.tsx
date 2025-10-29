@@ -12,7 +12,7 @@ const Signin = () => {
       <section className="flex flex-col bg-white md:flex-row min-h-screen w-screen justify-center items-center">
         <div className="flex flex-col md:pt-2 py-12 md:flex-row flex-1 px-2 gap-6 max-w-[840px] w-full">
           {/* Left Side */}
-          <div className="flex flex-col justify-center w-full md:w-3/5 px-2 py-2 gap-4 items-center md:items-start">
+          <div className="flex flex-col mt-[30vh] justify-center md:mt-0 w-full md:w-3/5 px-8 py-2 gap-4 items-center md:items-start">
             <Image src="/neuracore-black-logo.png"
               alt="Neuracore Logo"
               width={200} // required unless using fill
@@ -22,7 +22,7 @@ const Signin = () => {
             />
 
             <svg
-              className="w-64 mt-3 md:w-73 h-auto"
+              className="w-44 mt-3 md:w-73 h-auto"
               viewBox="0 0 441 70"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
