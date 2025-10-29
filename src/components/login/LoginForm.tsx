@@ -139,7 +139,7 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-gradient-to-tr cursor-pointer from-[#fe6c3c] to-[#fc3838] text-white font-medium py-2 px-4 rounded-lg mt-8 w-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="bg-gradient-to-tr cursor-pointer from-[#af1898] to-[#ce2577] text-white font-medium py-2 px-4 rounded-lg mt-8 w-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {isLoading ? (
             <>

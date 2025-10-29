@@ -62,7 +62,7 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex justify-center w-full px-4 sm:px-6 md:px-0 py-8">
+    <div id="signup-form" className="flex justify-center w-full px-4 sm:px-6 md:px-0 py-8">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-bg-gray flex flex-col items-center w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl px-6 sm:px-8 py-8 rounded-3xl border border-border-secondary text-white"
