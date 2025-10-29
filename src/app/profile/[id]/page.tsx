@@ -134,8 +134,8 @@ const ProfileView: React.FC = () => {
           <div className="space-y-6">
             <ProfileCard user={user} />
             {/* <StatsCard user={user} />
-            <SkillsCard user={user} />
-            <AchievementsCard user={user} /> */}
+            <SkillsCard user={user} />*/}
+            <AchievementsCard userId={user?.id} /> 
           </div>
 
           {/* RIGHT COLUMN */}

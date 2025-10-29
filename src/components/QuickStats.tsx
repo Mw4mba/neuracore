@@ -1,13 +1,18 @@
-import React from 'react';
+import { fetchMyIdeaCount } from '@/lib/fetchMyIdeaCount';
+import React, { useEffect, useState } from 'react';
 
 const QuickStats = () => {
+  const [ideaCount, setIdeaCount] = useState(0);
+  useEffect(() => {
+      fetchMyIdeaCount().then(setIdeaCount);
+    }, []);
   return (
     <div className="bg-[var(--color-bg-dark)] p-6 rounded-lg border border-[var(--color-border-secondary)] text-[var(--color-text-primary)]">
       <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
       <div className="space-y-4 text-sm">
         <div className="flex justify-between">
           <span className="text-[var(--color-text-secondary)]">Ideas Posted</span>
-          <span>12</span>
+          <span>{ideaCount}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-[var(--color-text-secondary)]">Average Rating</span>

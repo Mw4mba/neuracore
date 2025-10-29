@@ -3,6 +3,8 @@ import { Bookmark, CircleAlert, Heart, HeartIcon, MessageCircle, MoreHorizontal,
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { checkCommunityFavorite } from "@/lib/achievements/communityFavorite";
+import { checkInfluencerAchievement } from "@/lib/achievements/influencer";
 
 interface IdeaActionProps {
   ideaId?: string;
@@ -13,6 +15,7 @@ interface IdeaActionProps {
   currentUserId?: string;
   authorId?: string;
   isSaved?: boolean;
+  likes: number;
   isShared?: boolean;
 }
 
@@ -22,6 +25,7 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
   currentUserId,
   authorId,
   onSave,
+  likes,
   onShare,
   isLiked = false,
   isSaved = false,
@@ -54,18 +58,31 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
 
   const toggleLike = async () => {
     if (!ideaId) return;
+
     try {
       const res = await fetch(`/api/ideas/${ideaId}/like`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to toggle like");
+
       setLiked(!liked);
       toast.success(liked ? "Unliked!" : "Liked!");
+
       if (onLike) onLike();
+
+      // Community Favorite achievement
+      if (likes + 1 > 10) { // +1 because the like has just been added
+        await checkCommunityFavorite(authorId!);
+      }
+
+      // Influencer achievement
+      await checkInfluencerAchievement(authorId!);
+
     } catch (err: any) {
       console.error(err.message);
       toast.error("Failed to toggle like.");
     }
   };
+
 
   const handleDelete = async () => {
     if (!ideaId) return;
@@ -109,7 +126,7 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
               if (onShare) onShare();
               setShowMore(false);
             }}
-            className="flex w-full border-border-secondary cursor-pointer border-1 text-[12px] items-center gap-2 py-2 px-3 rounded hover:bg-btn-secondary-hover transition"
+            className="flex w-full border-border-secondary hover:text-bg cursor-pointer border-1 text-[12px] items-center gap-2 py-2 px-3 rounded hover:bg-btn-secondary-hover transition"
           >
             <Share2 size={14} /> Share
           </button>

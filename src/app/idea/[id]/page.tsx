@@ -181,6 +181,7 @@ function Idea() {
       <IdeaAction
         ideaId={ideaId}
         currentUserId={user?.id}
+        likes={idea.likes || 0}
         authorId={idea.author.id}
         onLike={() => console.log("Liked!")}
         onSave={() => console.log("Saved!")}

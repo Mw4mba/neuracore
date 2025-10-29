@@ -1,5 +1,6 @@
 "use client";
 
+import { grantAchievementOnce } from "@/lib/grantAchievementOnce";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ const AddComment: React.FC<AddCommentProps> = ({ author, ideaId, totalComments }
       setLoading(true);
       setError(null);
 
+      // Post the comment
       const res = await fetch("/api/comments/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,14 +41,32 @@ const AddComment: React.FC<AddCommentProps> = ({ author, ideaId, totalComments }
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Failed to post comment");
 
       setText(""); // clear textarea
       toast.success("Comment posted!");
+      console.log("✅ Comment posted!", data);
 
-      console.log("Comment posted!", data);
-      // optionally update parent state to show new comment
+      // Grant “First Word” achievement
+      const firstWordGranted = await grantAchievementOnce(author.id, "First Word");
+      if (firstWordGranted) {
+        toast.success("🏆 Achievement Unlocked: First Word!");
+      }
+
+      // --- Check “The Conversationalist” achievement ---
+      const commentsRes = await fetch(`/api/comments/user?userId=${author.id}`);
+      const commentsData = await commentsRes.json();
+
+      // Count unique idea_ids
+      const uniqueIdeas = new Set(commentsData.comments?.map((c: any) => c.idea_id));
+      if (uniqueIdeas.size >= 5) {
+        const conversationalistGranted = await grantAchievementOnce(author.id, "The Conversationalist");
+        if (conversationalistGranted) {
+          toast.success("🏆 Achievement Unlocked: The Conversationalist!");
+        }
+      }
+
+      // Optionally update parent state to show new comment
     } catch (err: any) {
       setError(err.message);
       toast.error(err.message);
@@ -54,6 +74,7 @@ const AddComment: React.FC<AddCommentProps> = ({ author, ideaId, totalComments }
       setLoading(false);
     }
   };
+
 
   return (
     <>
@@ -77,7 +98,7 @@ const AddComment: React.FC<AddCommentProps> = ({ author, ideaId, totalComments }
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Share your thoughts on this idea..."
-            className="w-full mb-2 text-white rounded placeholder:text-text-secondary h-16 md:h-20 p-2 md:p-2 placeholder:text-xs md:placeholder:text-sm bg-bg border border-border-secondary resize-none"
+            className="w-full mb-2 text-text-primary rounded placeholder:text-text-secondary h-16 md:h-20 p-2 md:p-2 placeholder:text-xs md:placeholder:text-sm bg-bg border border-border-secondary resize-none"
           />
           {error && <p className="text-xs text-red-500 mb-1">{error}</p>}
           <button

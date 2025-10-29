@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Award } from "lucide-react";
 import AchievementCard from "./AchievementCard";
 import { useSession } from "@/lib/auth/session-provider";
+import { fetchUserIdeaCount } from "@/lib/fetchUserIdeaCount";
 
 interface Achievement {
   id: string;
@@ -18,6 +19,8 @@ const UserAchievements = () => {
   const { user } = useSession();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
+  
+
 
   useEffect(() => {
     if (!user?.id) return;
@@ -40,6 +43,9 @@ const UserAchievements = () => {
 
     fetchAchievements();
   }, [user]);
+
+  
+
 
   if (loading) return <div className="py-8 text-center text-text-secondary">Loading achievements...</div>;
   if (!achievements.length)
