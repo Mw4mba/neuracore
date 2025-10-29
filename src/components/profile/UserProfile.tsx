@@ -3,9 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Edit, MapPin, Link as LinkIcon, CalendarDays } from "lucide-react";
 import { User } from "@supabase/auth-helpers-nextjs";
 import { toast } from "sonner";
+import { fetchUserIdeaCount } from "@/lib/fetchUserIdeaCount";
+import { fetchMyIdeaCount } from "@/lib/fetchMyIdeaCount";
+import { myTotalLikes } from "@/lib/myTotalLikes";
+import { myTotalViews } from "@/lib/myTotalViews";
 
 interface StatItemProps {
-  value: string;
+  value: number;
   label: string;
 }
 
@@ -37,6 +41,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [loadingFetch, setLoadingFetch] = useState(true);
+  const [ideaCount, setIdeaCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+  const [viewCount, setViewCount] = useState(0);
   const [loadingSave, setLoadingSave] = useState(false);
   const [profile, setProfile] = useState<Profile>({
     name: "",
@@ -124,6 +131,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    fetchMyIdeaCount().then(setIdeaCount);
+    myTotalLikes().then(setLikeCount);
+    myTotalViews().then(setViewCount);
+  }, []);
+
   if (loadingFetch) {
     return (
       <div className="w-full flex justify-center items-center py-20 text-text-secondary">
@@ -167,11 +180,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 
             {/* Stats */}
             <div className="flex flex-wrap justify-between my-4 gap-4 w-full">
-              <StatItem value="12" label="Ideas" />
-              <StatItem value="45.3K" label="Views" />
-              <StatItem value="3.4K" label="Likes" />
-              <StatItem value="1.3K" label="Followers" />
-              <StatItem value="342" label="Following" />
+              <StatItem value={ideaCount} label="Ideas" />
+              <StatItem value={viewCount} label="Views" />
+              <StatItem value={likeCount} label="Likes" />
+              <StatItem value={0} label="Followers" />
+              <StatItem value={0} label="Following" />
             </div>
 
             {/* Info */}
