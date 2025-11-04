@@ -259,12 +259,16 @@ const Navbar = () => {
           </div>
           {isProfileOpen && (
             <div className="absolute right-3 top-9 mt-3 w-54 rounded-lg border border-bg-gray bg-bg-dark shadow-lg z-50 p-1">
-              <Link
-                href="/profile"
-                className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
-              >
-                <UserRound size={21} className="text-brand-red" /> Profile
-              </Link>
+              <Link 
+                 href="/profile"
+                 className="flex items-center gap-3 px-3 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors">
+                  <div className="bg-bg-dark-gray py-2 px-2 rounded-full flex items-center justify-center">
+                    <UserRound size={18} />
+                  </div>
+                  <h1 className="text-text-primary font-semibold">
+                    {profile?.full_name || "Anonymous User"}
+                  </h1>
+                </Link>
               <Link
                 href="/profile?tab=Achievements"
                 className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
@@ -381,13 +385,6 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                   )}
-                  <Link
-                    href="/dashboard(user)"
-                    className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"
-                  >
-                    <LayoutDashboard size={16} className="text-brand-red"/>
-                    Dashboard
-                  </Link>
                   <Link
                     href="/leaderboard"
                     className="flex items-center gap-3 p-4 text-text-primary hover:bg-bg-dark-gray rounded-r-full"

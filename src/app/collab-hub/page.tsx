@@ -55,7 +55,7 @@ export default function ChatPage() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 bg-orange-300 border p-2 rounded-full shadow-md z-20"
+        className="md:hidden fixed top-3 left-4 bg-bg  border p-2 rounded-full shadow-md z-20"
       >
         <Menu size={22} />
       </button>
