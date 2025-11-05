@@ -293,12 +293,7 @@ const Navbar = () => {
               >
                 <CreditCard size={18} className="text-brand-red" /> Plan
               </Link>
-              <Link
-                href="/collab-hub"
-                className="flex items-center gap-3 px-5 py-3 text-sm hover:text-white hover:bg-bg-dark-gray rounded-md transition-colors"
-              >
-                <MessageCircle size={18} className="text-brand-red" /> CollabHub
-              </Link>
+              
               <button
                 onClick={handleSignOut}
                 disabled={loading}

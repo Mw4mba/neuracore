@@ -51,7 +51,6 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
   const [deleting, setDeleting] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showTeamsPopup, setShowTeamsPopup] = useState(false);
-  const [sendingRequest, setSendingRequest] = useState(false);
 
   useEffect(() => {
     if (!ideaId) return;
@@ -110,41 +109,6 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
       toast.error("Failed to delete idea.");
     } finally {
       setDeleting(false);
-    }
-  };
-
-  // 📨 Request Collaboration Function
-  const handleRequestCollab = async () => {
-    if (!authorId || !currentUserId) {
-      toast.error("You must be logged in to send a request.");
-      return;
-    }
-
-    if (authorId === currentUserId) {
-      toast.info("You can’t send a request to yourself.");
-      return;
-    }
-
-    try {
-      setSendingRequest(true);
-      const res = await fetch("/api/message-requests/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sender_id: currentUserId,
-          receiver_id: authorId,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send request");
-
-      toast.success("Collaboration request sent!");
-    } catch (err: any) {
-      console.error("Error sending message request:", err);
-      toast.error(err.message || "Failed to send request.");
-    } finally {
-      setSendingRequest(false);
     }
   };
 
@@ -219,13 +183,15 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
               <>
                 <button
                   onClick={() => setShowTeamsPopup(true)}
-                  className="flex items-center gap-2 bg-[#464EB8] hover:bg-[#3C429E] text-white justify-center py-2  w-full rounded-md text-[12px] font-medium transition-all duration-200"
+                  className="flex items-center  gap-2 bg-[#464EB8] hover:bg-[#3C429E] text-white justify-center py-2  w-full rounded-md text-[12px] font-medium transition-all duration-200"
                 >
-                  <img
-                    src="/icons/teams.png"
-                    alt="Microsoft Teams"
-                    className="w-4 h-4"
-                  />
+                  <div className="w-4 h-4 relative">
+                    <Image
+                      src="/icons/teams.png"
+                      alt="Microsoft Teams"
+                      fill
+                    />
+                  </div>
                   Request Collab
                 </button>
 
@@ -296,11 +262,13 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
                 onClick={() => setShowTeamsPopup(true)}
                 className="flex items-center gap-2 bg-[#464EB8] cursor-pointer hover:bg-[#3C429E] text-white justify-center py-2.5 px-4 rounded-md text-[12px] font-medium transition-all duration-200"
               >
-                <img
-                  src="/icons/teams.png"
-                  alt="Microsoft Teams"
-                  className="w-4 h-4"
-                />
+                <div className="w-4 h-4 relative">
+                    <Image
+                      src="/icons/teams.png"
+                      alt="Microsoft Teams"
+                      fill
+                    />
+                </div>
                 Request Collab
               </button>
 
@@ -335,11 +303,13 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
                         className="bg-[#464EB8] hover:bg-[#3C429E] cursor-pointer flex gap-1 items-center text-white px-4 py-2.5 rounded-md text-sm font-medium"
                       >
                         Open Teams
-                        <img
-                          src="/icons/teams.png"
-                          alt="Microsoft Teams"
-                          className="w-4 h-4"
-                        />
+                        <div className="w-4 h-4 relative">
+                            <Image
+                              src="/icons/teams.png"
+                              alt="Microsoft Teams"
+                              fill
+                            />
+                        </div>
                       </button>
                       <button
                         onClick={() => setShowTeamsPopup(false)}

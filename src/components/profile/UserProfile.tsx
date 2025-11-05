@@ -7,7 +7,6 @@ import { fetchUserIdeaCount } from "@/lib/fetchUserIdeaCount";
 import { fetchMyIdeaCount } from "@/lib/fetchMyIdeaCount";
 import { myTotalLikes } from "@/lib/myTotalLikes";
 import { myTotalViews } from "@/lib/myTotalViews";
-import MessageRequests from "./MessageRequests";
 
 interface StatItemProps {
   value: number;
@@ -55,7 +54,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     role: "user",
     created_at: "",
   });
-  // Add this helper function near the top of the component
   const getRoleLabel = (role?: string) => {
     switch (role) {
       case "user":
@@ -281,17 +279,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
           </div>
         </div>
       )}
-      {/* Message Requests Section */}
-      <div className="mt-8 bg-bg p-8 rounded-lg border border-border-secondary">
-        <h3 className="text-lg font-semibold text-text-primary mb-4">
-          Message Requests
-        </h3>
-
-        <div className="max-h-64 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-border-secondary scrollbar-track-bg-dark">
-          {/* Fetch and display message requests */}
-          <MessageRequests />
-        </div>
-      </div>
+      
     </>
   );
 };
