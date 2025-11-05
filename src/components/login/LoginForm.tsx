@@ -27,6 +27,15 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleAzureSignIn = async () => {
+      try {
+        // Redirect to your Azure login endpoint
+        window.location.href = "/api/auth/azure/login";
+      } catch (error) {
+        console.error("Azure signup failed:", error);
+        toast.error("Failed to sign up with Azure");
+      }
+    };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -153,6 +162,28 @@ const LoginForm = () => {
             'Log In'
           )}
         </button>
+        {/* Divider */}
+        <div className="flex items-center justify-center w-full my-5">
+          <div className="flex-grow border-t border-neutral-700"></div>
+          <span className="mx-3 text-xs text-neutral-500">OR</span>
+          <div className="flex-grow border-t border-neutral-700"></div>
+        </div>
+
+        {/* Azure Sign Up */}
+        <div className="w-full sm:w-[90%] md:w-full">
+          <button
+            type="button"
+            onClick={handleAzureSignIn}
+            className="flex items-center cursor-pointer justify-center gap-2 w-full bg-[#1c1c1c] border-1 border-[#106EBE] hover:bg-[#106EBE] text-white disabled:opacity-70 disabled:cursor-not-allowed text-sm font-medium py-2 rounded-md transition-all ease-in-out transform hover:scale-105 duration-200"
+          >
+            <img
+              src="/icons/azure-icon.png"
+              alt="Microsoft"
+              className="w-5 h-5"
+            />
+            Sign in with Azure
+          </button>
+        </div>
 
         <p className="text-[10px] mt-5 text-text-secondary text-center">
           Don't have an account?{" "}

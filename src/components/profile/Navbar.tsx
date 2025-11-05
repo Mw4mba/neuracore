@@ -176,7 +176,7 @@ const Navbar = () => {
         </div>
         {profile?.role === "moderator" && (
           <Link
-            href="/submit-challenge"
+            href="/recruiter/submit-challenge"
             className="hidden md:flex items-center justify-center group"
           >
             <div

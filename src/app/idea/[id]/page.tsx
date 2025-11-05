@@ -183,6 +183,7 @@ function Idea() {
         currentUserId={user?.id}
         likes={idea.likes || 0}
         authorId={idea.author.id}
+        authorEmail={author?.username}
         onLike={() => console.log("Liked!")}
         onSave={() => console.log("Saved!")}
         onShare={() => console.log("Shared!")}

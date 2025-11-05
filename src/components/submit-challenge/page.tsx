@@ -12,7 +12,7 @@ const SubmitChallengeForm = () => {
   const [formData, setFormData] = useState({
     company: "",
     title: "",
-    category: "",
+    // category: "",
     difficulty: "",
     description: "",
     objectives: "",
@@ -44,7 +44,7 @@ const SubmitChallengeForm = () => {
     const requiredFields = [
       "company",
       "title",
-      "category",
+      // "category",
       "difficulty",
       "description",
       "objectives",
@@ -95,7 +95,7 @@ const SubmitChallengeForm = () => {
       setFormData({
         company: "",
         title: "",
-        category: "",
+        // category: "",
         difficulty: "",
         description: "",
         objectives: "",
@@ -156,7 +156,7 @@ const SubmitChallengeForm = () => {
 
         {/* Category & Difficulty */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+          {/* <div>
             <label htmlFor="category" className="block text-sm font-medium text-text-primary">
               Category *
             </label>
@@ -173,7 +173,7 @@ const SubmitChallengeForm = () => {
               <option>Education</option>
               <option>Environment</option>
             </select>
-          </div>
+          </div> */}
 
           <div>
             <label htmlFor="difficulty" className="block text-sm font-medium text-text-primary">
