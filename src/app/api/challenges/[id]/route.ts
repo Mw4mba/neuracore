@@ -13,17 +13,7 @@ export async function GET(request: Request, { params }: Params) {
     const { data, error } = await supabase
       .from("challenges")
       .select(`
-        *,
-        created_by:profiles(id, username, full_name, avatar_url),
-        participants:challenge_participants(
-          user:profiles(id, username, full_name, avatar_url)
-        ),
-        submissions:challenge_submissions(
-          user:profiles(id, username, full_name, avatar_url),
-          file_url,
-          description,
-          submitted_at
-        )
+        *
       `)
       .eq("id", id)
       .single();

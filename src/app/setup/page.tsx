@@ -30,12 +30,15 @@ export default function OnboardingPage() {
     if (!selectedRole) return alert("Please select a role.");
 
     const updates: Record<string, any> = {
-      role: selectedRole, 
+      role: selectedRole,
       bio,
+      on_boarding: true, // 🔹 Mark onboarding complete here
     };
 
-    if (selectedRole === "innovator") updates.full_name = fullName;
-    if (selectedRole === "innovator") updates.skills = skills;
+    if (selectedRole === "innovator") {
+      updates.full_name = fullName;
+      updates.skills = skills;
+    }
 
     try {
       const res = await fetch("/api/profile/setup/", {
@@ -49,7 +52,7 @@ export default function OnboardingPage() {
 
       alert("Profile updated successfully!");
       console.log(data);
-      router.push("/trending-ideas");
+      router.push("/trending-ideas"); // 🔹 Redirect after onboarding
     } catch (err: any) {
       console.error(err);
       alert(err.message);
@@ -67,9 +70,9 @@ export default function OnboardingPage() {
         <div
           onClick={() => setSelectedRole("innovator")}
           className={`flex-1 cursor-pointer bg-bg-dark p-6 rounded-xl border transition-all text-center
-            ${selectedRole === "innovator" 
-              ? "border-border-secondary bg-bg-dark scale-105" 
-              : "border-border-secondary  hover:border-brand-red"}`}
+            ${selectedRole === "innovator"
+              ? "border-border-secondary bg-bg-dark scale-105"
+              : "border-border-secondary hover:border-brand-red"}`}
         >
           <GraduationCap size={80} className="mx-auto stroke-1 mb-3" />
           <h2 className="text-xl font-semibold text-text-primary mb-2">I’m an Innovator</h2>
@@ -82,8 +85,8 @@ export default function OnboardingPage() {
         <div
           onClick={() => setSelectedRole("recruiter")}
           className={`flex-1 cursor-pointer bg-bg-dark p-6 rounded-xl border transition-all text-center
-            ${selectedRole === "recruiter" 
-              ? "border-border-secondary bg-bg-dark scale-105" 
+            ${selectedRole === "recruiter"
+              ? "border-border-secondary bg-bg-dark scale-105"
               : "border-border-secondary hover:border-brand-red"}`}
         >
           <Building size={80} className="mx-auto stroke-1 mb-3"/>
@@ -97,7 +100,7 @@ export default function OnboardingPage() {
       {/* Conditional Input Field */}
       {selectedRole && (
         <div className="mt-6 w-full max-w-3xl mx-auto animate-fadeIn">
-          
+
           {/* Name Input */}
           {selectedRole === "innovator" ? (
             <>

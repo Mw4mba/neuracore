@@ -1,24 +1,56 @@
 "use client";
 import React, { useState } from "react";
-import { Heart, HeartOff, UserCheck, UserPlus, Share2 } from "lucide-react";
+import { Heart, UserCheck, UserPlus, Share2 } from "lucide-react";
 
 interface ChallengeActionsProps {
   profile_role?: string;
+  challengeId: string; // 👈 make sure to pass this when rendering
 }
 
 const ChallengeActions: React.FC<ChallengeActionsProps> = ({
-  profile_role
+  profile_role,
+  challengeId
 }) => {
   const [liked, setLiked] = useState(false);
   const [joined, setJoined] = useState(false);
   const [shared, setShared] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleJoin = async () => {
+    try {
+      if (joined || loading) return;
+      setLoading(true);
+
+      const res = await fetch("/api/challenges/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ challenge_id: challengeId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to join challenge");
+        return;
+      }
+
+      setJoined(true);
+      alert("Successfully joined the challenge!");
+    } catch (err) {
+      console.error("Join challenge error:", err);
+      alert("An error occurred while joining the challenge.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-4">
       {/* Join Button */}
       {profile_role === "user" && (
         <button
-          onClick={() => setJoined(!joined)}
+          onClick={handleJoin}
+          disabled={joined || loading}
           className={`
             flex items-center justify-center gap-2 rounded-lg transition-all
             text-xs sm:text-sm cursor-pointer font-medium px-5 py-3 
@@ -27,13 +59,13 @@ const ChallengeActions: React.FC<ChallengeActionsProps> = ({
                 ? "bg-text-primary text-bg hover:bg-text-primary/30"
                 : "bg-bg text-text-primary hover:bg-neutral-400 border-1 border-text-primary"
             }
+            ${loading ? "opacity-60 cursor-not-allowed" : ""}
           `}
         >
           {joined ? <UserCheck size={16} /> : <UserPlus size={16} />}
-          {joined ? "Joined" : "Join Challenge"}
+          {joined ? "Joined" : loading ? "Joining..." : "Join Challenge"}
         </button>
-        )}
-      
+      )}
 
       {/* Like Button */}
       <button

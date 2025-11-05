@@ -3,14 +3,14 @@ import Link from "next/link";
 import React from "react";
 
 type ChallengeHeaderProps = {
-  categories: string[];
+  tags: string[];
   title: string;
   name: string;
   link: string;
 };
 
 const ChallengeHeader: React.FC<ChallengeHeaderProps> = ({
-  categories,
+  tags,
   title,
   name,
   link,
@@ -25,7 +25,7 @@ const ChallengeHeader: React.FC<ChallengeHeaderProps> = ({
         <p className="font-medium text-xs md:text-sm">Back to Challenges</p>
       </Link>
       <div className="flex my-4 gap-2">
-        {categories.map((cat, i) => (
+        {tags.map((cat, i) => (
           <div
             key={i}
             className="bg-border-secondary px-2 py-1 rounded text-white"

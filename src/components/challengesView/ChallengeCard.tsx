@@ -11,7 +11,7 @@ interface Challenge {
   description: string;
   prize: string;
   deadline: string;
-  participants: number;
+  max_participants: number;
   tags: string[];
 }
 
@@ -55,7 +55,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge, getDifficultyC
           </div>
           <div className="flex text-text-secondary justify-between">
             <span>👥 Participants:</span>
-            <span>{challenge.participants}</span>
+            <span>{challenge.max_participants}</span>
           </div>
         </div>
 

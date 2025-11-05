@@ -12,15 +12,15 @@ const SubmitChallengeForm = () => {
   const [formData, setFormData] = useState({
     company: "",
     title: "",
-    // category: "",
+    category: "",
     difficulty: "",
     description: "",
     objectives: "",
-    judgingCriteria: "",
+    judging_criteria: "",
     requirements: "",
     prize: "",
     deadline: "",
-    maxParticipants: "",
+    max_participants: "",
   });
 
   const handleChange = (
@@ -44,14 +44,14 @@ const SubmitChallengeForm = () => {
     const requiredFields = [
       "company",
       "title",
-      // "category",
+      "category",
       "difficulty",
       "description",
       "objectives",
       "requirements",
       "prize",
       "deadline",
-      "maxParticipants",
+      "max_participants",
     ];
 
     for (const field of requiredFields) {
@@ -61,7 +61,7 @@ const SubmitChallengeForm = () => {
       }
     }
 
-    if (isNaN(Number(formData.maxParticipants)) || Number(formData.maxParticipants) <= 0) {
+    if (isNaN(Number(formData.max_participants)) || Number(formData.max_participants) <= 0) {
       toast.error("Max participants must be a valid positive number.");
       return false;
     }
@@ -82,7 +82,7 @@ const SubmitChallengeForm = () => {
         body: JSON.stringify({
           ...formData,
           tags,
-          maxParticipants: Number(formData.maxParticipants),
+          max_participants: Number(formData.max_participants),
         }),
       });
 
@@ -95,15 +95,15 @@ const SubmitChallengeForm = () => {
       setFormData({
         company: "",
         title: "",
-        // category: "",
+        category: "",
         difficulty: "",
         description: "",
         objectives: "",
-        judgingCriteria: "",
+        judging_criteria: "",
         requirements: "",
         prize: "",
         deadline: "",
-        maxParticipants: "",
+        max_participants: "",
       });
       setTags([]);
     } catch (err: any) {
@@ -156,7 +156,7 @@ const SubmitChallengeForm = () => {
 
         {/* Category & Difficulty */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* <div>
+          <div>
             <label htmlFor="category" className="block text-sm font-medium text-text-primary">
               Category *
             </label>
@@ -173,7 +173,7 @@ const SubmitChallengeForm = () => {
               <option>Education</option>
               <option>Environment</option>
             </select>
-          </div> */}
+          </div>
 
           <div>
             <label htmlFor="difficulty" className="block text-sm font-medium text-text-primary">
@@ -223,13 +223,13 @@ const SubmitChallengeForm = () => {
         </div>
 
         <div>
-          <label htmlFor="judgingCriteria" className="block text-sm font-medium text-text-primary">
+          <label htmlFor="judging_criteria" className="block text-sm font-medium text-text-primary">
             Judging Criteria *
           </label>
           <textarea
-            id="judgingCriteria"
+            id="judging_criteria"
             rows={3}
-            value={formData.judgingCriteria}
+            value={formData.judging_criteria}
             onChange={handleChange}
             placeholder="List the criteria used to evaluate submissions"
             className="mt-1 block w-full px-3 py-2 border border-border-secondary rounded-md placeholder:text-text-secondary"
@@ -282,13 +282,13 @@ const SubmitChallengeForm = () => {
           </div>
 
           <div>
-            <label htmlFor="maxParticipants" className="block text-sm font-medium text-text-primary">
+            <label htmlFor="max_participants" className="block text-sm font-medium text-text-primary">
               Max Participants *
             </label>
             <input
               type="number"
-              id="maxParticipants"
-              value={formData.maxParticipants}
+              id="max_participants"
+              value={formData.max_participants}
               onChange={handleChange}
               placeholder="e.g., 10"
               className="mt-1 block w-full px-3 py-2 border border-border-secondary rounded-md placeholder:text-text-secondary"

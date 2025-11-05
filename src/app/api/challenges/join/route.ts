@@ -10,49 +10,43 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing challenge_id" }, { status: 400 });
     }
 
-    //Ensure user is logged in
+    // ✅ Get user
     const {
       data: { user },
-      error: userError,
+      error: authError,
     } = await supabase.auth.getUser();
-    if (userError || !user) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Not signed in" }, { status: 401 });
     }
 
-    // Get current participant count safely
-    const { count, error: countError } = await supabase
-      .from("challenge_participants")
-      .select("*", { count: "exact", head: true })
-      .eq("challenge_id", challenge_id);
+    // ✅ Fetch challenge + participant count
+    const [{ data: challenge }, { count }] = await Promise.all([
+      supabase.from("challenges").select("max_participants").eq("id", challenge_id).single(),
+      supabase
+        .from("challenge_participants")
+        .select("*", { count: "exact", head: true })
+        .eq("challenge_id", challenge_id),
+    ]);
 
-    if (countError) throw countError;
-
-    const participantCount = count ?? 0; // default to 0 if null
-
-    // Get challenge info (max participants)
-    const { data: challenge, error: challengeError } = await supabase
-      .from("challenges")
-      .select("max_participants")
-      .eq("id", challenge_id)
-      .single();
-
-    if (challengeError) throw challengeError;
     if (!challenge) {
       return NextResponse.json({ error: "Challenge not found" }, { status: 404 });
     }
 
-    if (participantCount >= challenge.max_participants) {
+    if ((count ?? 0) >= challenge.max_participants) {
       return NextResponse.json({ error: "Challenge is full" }, { status: 403 });
     }
 
-    // Try to insert participant
+    // ✅ Try to join
     const { data, error } = await supabase
       .from("challenge_participants")
       .insert([{ challenge_id, user_id: user.id }])
       .select()
       .single();
 
-    if (error && !error.message.includes("duplicate")) throw error;
+    if (error?.code === "23505") {
+      return NextResponse.json({ message: "Already joined" }, { status: 409 });
+    }
+    if (error) throw error;
 
     return NextResponse.json({ success: true, participant: data });
   } catch (err: any) {

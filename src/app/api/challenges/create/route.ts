@@ -1,16 +1,13 @@
-
 import { NextResponse } from "next/server";
-import { createClient } from "@/app/lib/supabase/client";
+import { createClient } from "@/app/lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient();
-    const body = await req.json();
-
+    const supabase = await createClient();
     const {
       company,
       title,
-      // category,
+      category,
       difficulty,
       description,
       objectives,
@@ -20,8 +17,13 @@ export async function POST(req: Request) {
       deadline,
       max_participants,
       tags,
-      created_by,
-    } = body;
+    } = await req.json();
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
 
     const { data, error } = await supabase
       .from("challenges")
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
         {
           company,
           title,
-          // category,
+          category,
           difficulty,
           description,
           objectives,
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
           deadline,
           max_participants,
           tags,
-          created_by,
+          created_by: user.id, // ✅ securely assign user ID
         },
       ])
       .select()

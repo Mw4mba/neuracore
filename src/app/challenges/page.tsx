@@ -16,76 +16,66 @@ interface Challenge {
   difficulty: string;
   prize: string;
   deadline: string;
-  participants: number;
+  max_participants: number;
   tags: string[];
 }
 
-const mockChallenges: Challenge[] = [
-  {
-    id: "a",
-    title: "AI-Powered Healthcare Assistant",
-    company: "HealthTech Corp",
-    description:
-      "Design an AI solution to improve patient care and reduce hospital wait times.",
-    category: "Healthcare",
-    difficulty: "Advanced",
-    prize: "R15,000",
-    deadline: "2025-11-15",
-    participants: 127,
-    tags: ["AI", "Healthcare", "Machine Learning"],
-  },
-  {
-    id: "b",
-    title: "Sustainable Urban Farming Solution",
-    company: "GreenFuture Inc",
-    description:
-      "Create an innovative solution for urban farming that maximizes yield in limited spaces.",
-    category: "Sustainability",
-    difficulty: "Intermediate",
-    prize: "R10,000",
-    deadline: "2025-11-30",
-    participants: 89,
-    tags: ["Sustainability", "Agriculture", "IoT"],
-  },
-  {
-    id: "c",
-    title: "Next-Gen EdTech Platform",
-    company: "EduInnovate",
-    description:
-      "Build a platform that personalizes learning experiences using adaptive algorithms.",
-    category: "Education",
-    difficulty: "Advanced",
-    prize: "R20,000",
-    deadline: "2025-12-01",
-    participants: 203,
-    tags: ["Education", "AI", "UX Design"],
-  },
-  {
-    id: "d",
-    title: "Blockchain Supply Chain Tracker",
-    company: "LogiChain Solutions",
-    description:
-      "Develop a blockchain-based solution for transparent supply chain management.",
-    category: "Technology",
-    difficulty: "Expert",
-    prize: "R25,000",
-    deadline: "2025-12-15",
-    participants: 156,
-    tags: ["Blockchain", "Supply Chain", "Web3"],
-  },
-];
-
 const Challenges: React.FC = () => {
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
   const [profile, setProfile] = useState<{
-      full_name?: string;
-      username?: string;
-      avatar_url?: string;
-      role?: string;
-    } | null>(null);
+    full_name?: string;
+    username?: string;
+    avatar_url?: string;
+    role?: string;
+  } | null>(null);
 
-  const filteredChallenges = mockChallenges.filter((challenge) => {
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // Fetch Profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/profile/get");
+        if (!res.ok) {
+          toast.warning("Not logged in or failed to fetch profile");
+          return;
+        }
+        const data = await res.json();
+        setProfile(data.user || data);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Fetch Challenges from API
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const res = await fetch("/api/challenges/get");
+        if (!res.ok) {
+          throw new Error("Failed to fetch challenges");
+        }
+        const data = await res.json();
+        setChallenges(data.challenges || data);
+      } catch (err: any) {
+        console.error("Error fetching challenges:", err);
+        toast.error(err.message || "Error fetching challenges");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChallenges();
+  }, []);
+
+  // Filter logic
+  const filteredChallenges = challenges.filter((challenge) => {
     const categoryMatch =
       selectedCategory === "all" ||
       challenge.category.toLowerCase() === selectedCategory;
@@ -94,25 +84,6 @@ const Challenges: React.FC = () => {
       challenge.difficulty.toLowerCase() === selectedDifficulty;
     return categoryMatch && difficultyMatch;
   });
-  useEffect(() => {
-      const fetchProfile = async () => {
-        try {
-          const res = await fetch("/api/profile/get");
-          if (!res.ok) {
-            toast.warning("Not logged in or failed to fetch profile");
-            return;
-          }
-          const data = await res.json();
-          setProfile(data.user || data); 
-        } catch (err) {
-          console.error("Error fetching profile:", err);
-        }
-      };
-    
-      fetchProfile();
-    }, []);
-    
-      const profileRef = useRef<HTMLDivElement>(null);
 
   const getDifficultyColor = (difficulty: string) => {
     const colors: Record<string, string> = {
@@ -126,7 +97,6 @@ const Challenges: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg text-text-primary">
-      {/* Content */}
       <main className="max-w-7xl px-[4vw] md:px-[10vw] mx-auto pt-16 pb-16">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
@@ -137,25 +107,34 @@ const Challenges: React.FC = () => {
             </p>
           </div>
           {profile?.role === "moderator" && (
-              <Link
-                href="/recruiter/submit-challenge"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-btn-primary text-white font-medium hover:bg-btn-primary-hover transition"
-              >
-                <PenLine size={16} /> Submit Challenge
-              </Link>
-            )}
+            <Link
+              href="/recruiter/submit-challenge"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-btn-primary text-white font-medium hover:bg-btn-primary-hover transition"
+            >
+              <PenLine size={16} /> Submit Challenge
+            </Link>
+          )}
         </div>
+
+        {/* Filters */}
         <Filters
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           selectedDifficulty={selectedDifficulty}
           setSelectedDifficulty={setSelectedDifficulty}
         />
-        
-        <ChallengeGrid
-          filteredChallenges={filteredChallenges}
-          getDifficultyColor={getDifficultyColor}
-        />
+
+        {/* Challenge Grid */}
+        {loading ? (
+          <p className="text-center text-gray-400 mt-10">Loading challenges...</p>
+        ) : filteredChallenges.length === 0 ? (
+          <p className="text-center text-gray-400 mt-10">No challenges found.</p>
+        ) : (
+          <ChallengeGrid
+            filteredChallenges={filteredChallenges}
+            getDifficultyColor={getDifficultyColor}
+          />
+        )}
       </main>
     </div>
   );
