@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
+import { uploadIdeaCover } from "@/lib/storage/image-upload";
 
 const categories = ["General", "Tech", "Health", "Education", "Finance"];
 
@@ -51,21 +52,18 @@ export async function POST(req: NextRequest) {
 
     let coverImgUrl: string | null = null;
 
-    // Handle cover image upload
+    // Handle cover image upload using utility function
     if (coverImg && coverImg instanceof File) {
-      const filePath = `idea-covers/${Date.now()}-${coverImg.name}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("idea-covers")
-        .upload(filePath, coverImg);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage
-        .from("idea-covers")
-        .getPublicUrl(filePath);
-
-      coverImgUrl = publicUrlData.publicUrl;
+      try {
+        const uploadResult = await uploadIdeaCover(coverImg);
+        coverImgUrl = uploadResult.url;
+      } catch (uploadError) {
+        console.error("Image upload error:", uploadError);
+        return NextResponse.json(
+          { error: uploadError instanceof Error ? uploadError.message : "Failed to upload image" },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate required fields for RLS policy

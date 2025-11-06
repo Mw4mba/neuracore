@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
+import { deleteImage, extractFilePathFromUrl } from "@/lib/storage/image-upload";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -27,6 +28,42 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
+    // First, get the idea to check for cover image
+    const { data: idea, error: fetchError } = await supabase
+      .from("ideas")
+      .select("cover_img, author")
+      .eq("id", ideaId)
+      .single();
+
+    if (fetchError || !idea) {
+      return NextResponse.json(
+        { error: "Idea not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if user is the author
+    if (idea.author !== user.id) {
+      return NextResponse.json(
+        { error: "Permission denied - you can only delete your own ideas" },
+        { status: 403 }
+      );
+    }
+
+    // Delete cover image from storage if it exists
+    if (idea.cover_img) {
+      try {
+        const filePath = extractFilePathFromUrl(idea.cover_img);
+        if (filePath) {
+          await deleteImage(filePath);
+        }
+      } catch (deleteError) {
+        // Log but don't fail the deletion if image removal fails
+        console.warn("Failed to delete cover image:", deleteError);
+      }
+    }
+
+    // Delete the idea
     const { error } = await supabase
       .from("ideas")
       .delete()
