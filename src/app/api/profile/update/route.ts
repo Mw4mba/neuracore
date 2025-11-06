@@ -17,7 +17,7 @@ export async function PATCH(req: Request) {
     const body = await req.json();
 
     // Only allow specific fields(role is temporary)
-    const allowedFields = ["full_name", "bio", "role"];
+    const allowedFields = ["full_name", "bio", "role", "is_onboard"];
     const updates: Record<string, any> = {};
 
     for (const key of allowedFields) {

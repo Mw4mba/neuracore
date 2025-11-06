@@ -16,7 +16,7 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshSession } = useSession();
-  
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,15 +27,15 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleAzureSignIn = async () => {
-      try {
-        // Redirect to your Azure login endpoint
-        window.location.href = "/api/auth/azure/login";
-      } catch (error) {
-        console.error("Azure signup failed:", error);
-        toast.error("Failed to sign up with Azure");
-      }
-    };
+    try {
+      window.location.href = "/api/auth/azure/login";
+    } catch (error) {
+      console.error("Azure signup failed:", error);
+      toast.error("Failed to sign up with Azure");
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,27 +44,42 @@ const LoginForm = () => {
 
     try {
       // Sign in with Supabase
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
 
-      if (signInError) {
-        throw new Error(signInError.message || 'Sign in failed');
+      if (signInError || !signInData.user) {
+        throw new Error(signInError?.message || "Sign in failed");
       }
 
       // Refresh the session context
       await refreshSession();
 
-      // Show success toast
-      toast.success("Successfully signed in!");
+      // Fetch the user's profile via API
+      const profileRes = await fetch("/api/profile/get");
 
-      // Get the redirect URL from the query parameters or use a default
-      const redirect = searchParams.get('redirect') || '/setup';
-      router.push(redirect);
+      if (!profileRes.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const profileData = await profileRes.json();
+
+      toast.success("Successfully signed in!");
+      if(profileData.role === "admin") {
+        router.push("/trending-ideas");
+        return;
+      }
+      // Redirect based on onboarding status
+      if (profileData.is_onboard === false) {
+        router.push("/setup");
+      } else if (profileData.is_onboard === true) {
+        router.push("/trending-ideas");
+      }
+
     } catch (err: any) {
-      setError(err instanceof Error ? err.message : 'An error occurred during sign in');
-      toast.error(err instanceof Error ? err.message : 'Sign in failed');
+      setError(err instanceof Error ? err.message : "An error occurred during sign in");
+      toast.error(err instanceof Error ? err.message : "Sign in failed");
       setIsLoading(false);
     }
   }
@@ -162,14 +177,13 @@ const LoginForm = () => {
             'Log In'
           )}
         </button>
-        {/* Divider */}
+
         <div className="flex items-center justify-center w-full my-5">
           <div className="flex-grow border-t border-neutral-700"></div>
           <span className="mx-3 text-xs text-neutral-500">OR</span>
           <div className="flex-grow border-t border-neutral-700"></div>
         </div>
 
-        {/* Azure Sign Up */}
         <div className="w-full sm:w-[90%] md:w-full">
           <button
             type="button"

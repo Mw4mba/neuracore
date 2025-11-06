@@ -25,7 +25,8 @@ function Dashboard() {
   const [totalLikes, setTotalLikes] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
   const [totalComments, setTotalComments] = useState(0);
-
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
 
   // 🔹 Fetch the logged-in user
@@ -102,6 +103,24 @@ useEffect(() => {
   fetchTotalComments();
 }, []);
 
+// 🔹 Fetch follower/following counts
+  useEffect(() => {
+    const fetchFollowCounts = async () => {
+      try {
+        const res = await fetch("/api/follow/count");
+        if (!res.ok) throw new Error("Failed to fetch follow counts");
+
+        const data = await res.json();
+        setFollowerCount(data.follower_count || 0);
+        setFollowingCount(data.following_count || 0);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchFollowCounts();
+  }, []);
+
 
   return (
     <main className="py-8 px-[4vw] md:px-[10vw] bg-[var(--color-bg)]">
@@ -127,7 +146,7 @@ useEffect(() => {
         />
         <StatCard
           title="Followers"
-          value="1,250"
+          value={`${followerCount}`}
           change="+22%"
           icon={<Users size={24} className="text-gray-400" />}
         />

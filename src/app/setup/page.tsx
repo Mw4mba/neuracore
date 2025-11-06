@@ -32,7 +32,7 @@ export default function OnboardingPage() {
     const updates: Record<string, any> = {
       role: selectedRole,
       bio,
-      on_boarding: true, // 🔹 Mark onboarding complete here
+      is_onboard: true, 
     };
 
     if (selectedRole === "innovator") {
