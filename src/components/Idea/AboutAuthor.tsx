@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { toast } from "sonner";
 
 interface AuthorProps {
   id: string;
@@ -31,6 +32,20 @@ const AboutAuthor: React.FC<AuthorProps> = ({
         return "Admin";
       default:
         return "Unknown";
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      await fetch("/api/follow/post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ following_id: id }),
+      });
+      toast.success("You are now following this user!");
+    } catch (error) {
+      console.error("Error following user:", error);
+      toast.error("Failed to follow user. Please try again.");
     }
   };
   return (
@@ -76,7 +91,9 @@ const AboutAuthor: React.FC<AuthorProps> = ({
           <p className="text-sm text-text-secondary my-2">{bio}</p>
 
           <div className="flex mt-4">
-            <button className="flex items-center w-full   gap-1 justify-center border border-border-secondary hover:bg-btn-secondary-hover text-text-primary hover:text-white py-2 px-4 rounded-lg cursor-pointer transition-colors duration-300 text-[12px]">
+            <button 
+             onClick={handleFollow}
+             className="flex items-center w-full   gap-1 justify-center border border-border-secondary hover:bg-btn-secondary-hover text-text-primary hover:text-white py-2 px-4 rounded-lg cursor-pointer transition-colors duration-300 text-[12px]">
               Follow
             </button>
           </div>

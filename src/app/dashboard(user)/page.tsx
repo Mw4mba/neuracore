@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import IdeaPerformanceSkeleton from "@/components/loaders/IdeaPerformanceSkeleton";
 import { myTotalLikes } from "@/lib/myTotalLikes";
 import { myTotalViews } from "@/lib/myTotalViews";
-import { get } from "http";
 import { myTotalComments } from "@/lib/myTotalComments";
 
 function DashboardPage() {
@@ -24,8 +23,8 @@ function DashboardPage() {
   const [totalLikes, setTotalLikes] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
   const [totalComments, setTotalComments] = useState(0);
-
-
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   // 🔹 Fetch the logged-in user
   useEffect(() => {
@@ -69,38 +68,53 @@ function DashboardPage() {
 
     fetchUserIdeas();
   }, [user]);
+
+  // 🔹 Fetch total likes, views, and comments
   useEffect(() => {
-  const getLikes = async () => {
-    const likes = await myTotalLikes();
-    setTotalLikes(likes);
-  };
+    const getLikes = async () => {
+      const likes = await myTotalLikes();
+      setTotalLikes(likes);
+    };
 
-  getLikes();
+    const getViews = async () => {
+      const views = await myTotalViews();
+      setTotalViews(views);
+    };
 
-  const getViews = async () => {
-    const views = await myTotalViews();
-    setTotalViews(views);
-  };
+    const fetchTotalComments = async () => {
+      try {
+        const res = await fetch("/api/comments/total");
+        if (!res.ok) throw new Error("Failed to fetch total comments");
 
-  getViews();
-}, []);
+        const data = await res.json();
+        setTotalComments(data.totalComments);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-useEffect(() => {
-  const fetchTotalComments = async () => {
-    try {
-      const res = await fetch("/api/comments/total");
-      if (!res.ok) throw new Error("Failed to fetch total comments");
+    getLikes();
+    getViews();
+    fetchTotalComments();
+  }, []);
 
-      const data = await res.json();
-      setTotalComments(data.totalComments);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // 🔹 Fetch follower/following counts
+  useEffect(() => {
+    const fetchFollowCounts = async () => {
+      try {
+        const res = await fetch("/api/follow/count");
+        if (!res.ok) throw new Error("Failed to fetch follow counts");
 
-  fetchTotalComments();
-}, []);
+        const data = await res.json();
+        setFollowerCount(data.follower_count || 0);
+        setFollowingCount(data.following_count || 0);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
+    fetchFollowCounts();
+  }, []);
 
   return (
     <main className="py-8 px-[4vw] md:px-[10vw] bg-[var(--color-bg)]">
@@ -126,7 +140,7 @@ useEffect(() => {
         />
         <StatCard
           title="Followers"
-          value="1,250"
+          value={`${followerCount}`}
           change="+22%"
           icon={<Users size={24} className="text-gray-400" />}
         />
@@ -158,7 +172,7 @@ useEffect(() => {
         {/* ---------- RIGHT SIDEBAR ---------- */}
         <div className="flex flex-col gap-8">
           <QuickStats />
-          <Achievements userId={user?.id}/>
+          <Achievements userId={user?.id} />
           <ActivityThisWeek />
         </div>
       </div>

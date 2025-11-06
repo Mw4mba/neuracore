@@ -11,7 +11,7 @@ interface Challenge {
   description: string;
   prize: string;
   deadline: string;
-  participants: number;
+  max_participants: number;
   tags: string[];
 }
 

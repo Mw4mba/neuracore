@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trophy, Plus } from "lucide-react";
 import { createPortal } from "react-dom";
 
 interface Challenge {
-  id: number;
+  id: string;
   title: string;
   prize: string;
   deadline: string;
-  participants: number;
+  max_participants: number;
 }
 
 const JoinedChallenges: React.FC = () => {
@@ -20,23 +20,39 @@ const JoinedChallenges: React.FC = () => {
     category: "",
     description: "",
   });
+  const [joinedChallenges, setJoinedChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const joinedChallenges: Challenge[] = [
-    {
-      id: 1,
-      title: "GreenTech Innovation Challenge",
-      prize: "$5000",
-      deadline: "Nov 30, 2025",
-      participants: 124,
-    },
-    {
-      id: 2,
-      title: "AI for Education Hackathon",
-      prize: "$3000",
-      deadline: "Dec 12, 2025",
-      participants: 89,
-    },
-  ];
+  // Fetch challenges the user participates in
+  useEffect(() => {
+    const fetchJoinedChallenges = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/challenges/my-participation");
+        if (!res.ok) throw new Error("Failed to fetch joined challenges");
+        const data = await res.json();
+        // Map API response to Challenge interface
+        const challenges: Challenge[] = data.map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          prize: c.prize,
+          deadline: new Date(c.deadline).toLocaleDateString("en-ZA", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+          max_participants: c.max_participants || 0,
+        }));
+        setJoinedChallenges(challenges);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJoinedChallenges();
+  }, []);
 
   const handleSubmitIdea = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +60,8 @@ const JoinedChallenges: React.FC = () => {
     setIsSubmitIdeaOpen(false);
     setIdeaFormData({ title: "", category: "", description: "" });
   };
+
+  if (loading) return <p className="text-text-secondary">Loading joined challenges...</p>;
 
   return (
     <div className="bg-bg-dark border border-border-secondary mb-8 rounded-xl backdrop-blur-md p-6">
@@ -55,34 +73,38 @@ const JoinedChallenges: React.FC = () => {
 
       {/* Challenge List */}
       <div className="space-y-4">
-        {joinedChallenges.map((challenge) => (
-          <div
-            key={challenge.id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-border-secondary bg-[var(--color-bg-gray)]/60 hover:border-border-primary/50 cursor-pointer transition-all"
-          >
-            <div className="flex-1">
-              <h3 className="font-medium text-[var(--color-text-primary)] mb-1">
-                {challenge.title}
-              </h3>
-              <div className="flex flex-wrap gap-2 text-xs md:text-sm text-[var(--color-text-secondary)]">
-                <span>Prize: {challenge.prize}</span>
-                <span>Deadline: {challenge.deadline}</span>
-                <span>{challenge.participants} participants</span>
-              </div>
-            </div>
-
-            {/* Submit Idea Button */}
-            <button
-              onClick={() => {
-                setSelectedChallenge(challenge.id.toString());
-                setIsSubmitIdeaOpen(true);
-              }}
-              className="mt-3 sm:mt-0 sm:ml-4 px-4 py-2 flex items-center justify-center gap-1 rounded-md text-sm font-medium bg-btn-primary cursor-pointer hover:bg-btn-primary-hover text-white hover:opacity-90 transition-all"
+        {joinedChallenges.length === 0 ? (
+          <p className="text-text-secondary">You have not joined any challenges yet.</p>
+        ) : (
+          joinedChallenges.map((challenge) => (
+            <div
+              key={challenge.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-border-secondary bg-[var(--color-bg-gray)]/60 hover:border-border-primary/50 cursor-pointer transition-all"
             >
-              <Plus className="w-4 h-4" /> Submit Idea
-            </button>
-          </div>
-        ))}
+              <div className="flex-1">
+                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">
+                  {challenge.title}
+                </h3>
+                <div className="flex flex-wrap gap-2 text-xs md:text-sm text-[var(--color-text-secondary)]">
+                  <span>Prize: {challenge.prize}</span>
+                  <span>Deadline: {challenge.deadline}</span>
+                  <span>Max Participants: {challenge.max_participants}</span>
+                </div>
+              </div>
+
+              {/* Submit Idea Button */}
+              <button
+                onClick={() => {
+                  setSelectedChallenge(challenge.id);
+                  setIsSubmitIdeaOpen(true);
+                }}
+                className="mt-3 sm:mt-0 sm:ml-4 px-4 py-2 flex items-center justify-center gap-1 rounded-md text-sm font-medium bg-btn-primary cursor-pointer hover:bg-btn-primary-hover text-white hover:opacity-90 transition-all"
+              >
+                <Plus className="w-4 h-4" /> Submit Idea
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal (Dialog) */}
@@ -99,7 +121,7 @@ const JoinedChallenges: React.FC = () => {
               </h3>
               <p className="text-sm text-[var(--color-text-secondary)] mb-4">
                 Submit your innovative idea for "
-                {joinedChallenges.find((c) => c.id.toString() === selectedChallenge)?.title}"
+                {joinedChallenges.find((c) => c.id === selectedChallenge)?.title}"
               </p>
 
               <form onSubmit={handleSubmitIdea} className="space-y-4">
@@ -148,10 +170,7 @@ const JoinedChallenges: React.FC = () => {
                   <textarea
                     value={ideaFormData.description}
                     onChange={(e) =>
-                      setIdeaFormData({
-                        ...ideaFormData,
-                        description: e.target.value,
-                      })
+                      setIdeaFormData({ ...ideaFormData, description: e.target.value })
                     }
                     placeholder="Describe your idea in detail"
                     required
@@ -180,8 +199,6 @@ const JoinedChallenges: React.FC = () => {
           </div>,
           document.body
         )}
-  
-
     </div>
   );
 };

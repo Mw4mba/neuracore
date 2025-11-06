@@ -1,10 +1,20 @@
 "use client";
-import { Bookmark, CircleAlert, Heart, HeartIcon, MessageCircle, MoreHorizontal, Share2, Trash2 } from "lucide-react";
+import {
+  Bookmark,
+  CircleAlert,
+  Heart,
+  HeartIcon,
+  MessageCircle,
+  MoreHorizontal,
+  Share2,
+  Trash2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { checkCommunityFavorite } from "@/lib/achievements/communityFavorite";
 import { checkInfluencerAchievement } from "@/lib/achievements/influencer";
+import Image from "next/image";
 
 interface IdeaActionProps {
   ideaId?: string;
@@ -14,6 +24,7 @@ interface IdeaActionProps {
   isLiked?: boolean;
   currentUserId?: string;
   authorId?: string;
+  authorEmail?: string;
   isSaved?: boolean;
   likes: number;
   isShared?: boolean;
@@ -24,6 +35,7 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
   onLike,
   currentUserId,
   authorId,
+  authorEmail,
   onSave,
   likes,
   onShare,
@@ -37,8 +49,8 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
   const [shared, setShared] = useState(isShared);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
   const [showMore, setShowMore] = useState(false);
+  const [showTeamsPopup, setShowTeamsPopup] = useState(false);
 
   useEffect(() => {
     if (!ideaId) return;
@@ -66,23 +78,20 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
 
       setLiked(!liked);
       toast.success(liked ? "Unliked!" : "Liked!");
-
       if (onLike) onLike();
 
       // Community Favorite achievement
-      if (likes + 1 > 10) { // +1 because the like has just been added
+      if (likes + 1 > 10) {
         await checkCommunityFavorite(authorId!);
       }
 
       // Influencer achievement
       await checkInfluencerAchievement(authorId!);
-
     } catch (err: any) {
       console.error(err.message);
       toast.error("Failed to toggle like.");
     }
   };
-
 
   const handleDelete = async () => {
     if (!ideaId) return;
@@ -171,10 +180,65 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
               </button>
 
               {authorId !== currentUserId && (
-                <button className="flex w-full items-center gap-2 py-2 px-3 rounded hover:bg-bg-light transition">
-                  <MessageCircle size={14} /> Request Collab
+              <>
+                <button
+                  onClick={() => setShowTeamsPopup(true)}
+                  className="flex items-center  gap-2 bg-[#464EB8] hover:bg-[#3C429E] text-white justify-center py-2  w-full rounded-md text-[12px] font-medium transition-all duration-200"
+                >
+                  <div className="w-4 h-4 relative">
+                    <Image
+                      src="/icons/teams.png"
+                      alt="Microsoft Teams"
+                      fill
+                    />
+                  </div>
+                  Request Collab
                 </button>
-              )}
+
+                {/* Confirmation Popup */}
+                {showTeamsPopup && (
+                  <div className="fixed inset-0 backdrop-blur-2xl bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-bg rounded-lg shadow-lg p-6 w-[90%] md:w-[380px] text-center">
+                      <div className="h-12 relative mx-auto w-12">
+                        <Image
+                            src="/icons/teams.png"
+                            alt="Microsoft Teams"
+                            className="text-black"
+                            fill
+                          />
+                        </div>
+                      <h2 className="text-lg font-semibold text-text-primary mb-2">
+                        Open Microsoft Teams
+                      </h2>
+                      <p className="text-sm text-text-secondary mb-4">
+                        You’re about to message this user on Microsoft Teams. Continue?
+                      </p>
+                      <div className="flex justify-center gap-3">
+                        <button
+                          onClick={() =>
+                            window.open(
+                              `https://teams.microsoft.com/l/chat/0/0?users=${encodeURIComponent(
+                                authorEmail ? authorEmail : ""
+                              )}`,
+                              
+                            )
+                          }
+                          className="bg-[#464EB8] hover:bg-[#3C429E] text-white px-4 py-2 rounded-md text-sm font-medium"
+                        >
+                          Open Teams
+                        </button>
+                        <button
+                          onClick={() => setShowTeamsPopup(false)}
+                          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
 
               {authorId === currentUserId && (
                 <button
@@ -193,10 +257,71 @@ const IdeaAction: React.FC<IdeaActionProps> = ({
 
         <div className="hidden md:flex gap-2">
           {authorId !== currentUserId && (
-            <button className="flex items-center gap-1 bg-text-primary text-bg justify-center py-2 px-4 rounded cursor-pointer text-[12px]">
-              <MessageCircle size={14} />
-              Request Collab
-            </button>
+            <>
+              <button
+                onClick={() => setShowTeamsPopup(true)}
+                className="flex items-center gap-2 bg-[#464EB8] cursor-pointer hover:bg-[#3C429E] text-white justify-center py-2.5 px-4 rounded-md text-[12px] font-medium transition-all duration-200"
+              >
+                <div className="w-4 h-4 relative">
+                    <Image
+                      src="/icons/teams.png"
+                      alt="Microsoft Teams"
+                      fill
+                    />
+                </div>
+                Request Collab
+              </button>
+
+              {/* Confirmation Popup */}
+              {showTeamsPopup && (
+                <div className="fixed inset-0 backdrop-blur-2xl bg-black/40 flex items-center justify-center z-50">
+                  <div className="bg-bg rounded-lg shadow-lg p-6 w-[90%] md:w-[380px] text-center">
+                    <div className="h-12 relative mx-auto w-12">
+                    <Image
+                        src="/icons/teams.png"
+                        alt="Microsoft Teams"
+                        className="text-black"
+                        fill
+                      />
+                    </div>
+                    <h2 className="text-lg font-semibold mt-4 text-text-primary mb-2">
+                      Open Microsoft Teams
+                    </h2>
+                    <p className="text-sm text-text-secondary mb-4">
+                      You’re about to message this user on Microsoft Teams. Continue?
+                    </p>
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `https://teams.microsoft.com/l/chat/0/0?users=${encodeURIComponent(
+                              authorEmail? authorEmail : ""
+                            )}`,
+                            
+                          )
+                        }
+                        className="bg-[#464EB8] hover:bg-[#3C429E] cursor-pointer flex gap-1 items-center text-white px-4 py-2.5 rounded-md text-sm font-medium"
+                      >
+                        Open Teams
+                        <div className="w-4 h-4 relative">
+                            <Image
+                              src="/icons/teams.png"
+                              alt="Microsoft Teams"
+                              fill
+                            />
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setShowTeamsPopup(false)}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {authorId === currentUserId && (
             <button

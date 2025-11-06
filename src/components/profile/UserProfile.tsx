@@ -54,7 +54,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     role: "user",
     created_at: "",
   });
-  // Add this helper function near the top of the component
   const getRoleLabel = (role?: string) => {
     switch (role) {
       case "user":
@@ -280,6 +279,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
           </div>
         </div>
       )}
+      
     </>
   );
 };

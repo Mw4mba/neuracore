@@ -53,6 +53,7 @@ export default function RootLayout({
     !pathname.includes("signin") &&
     !pathname.includes("setup") &&
     !pathname.includes("admin/dashboard") &&
+    !pathname.includes("collab-hub") &&
     !pathname.includes("login");
 
   return (
